@@ -39,10 +39,7 @@ function Dashboard() {
     );
   }
 
-  // Get band from onboarding data
   const targetBand = profileData?.onboarding?.targetBand || '-';
-  
-  // Essays count from profile data
   const essaysWritten = profileData?.essaysCount || 0;
 
   return (
@@ -84,11 +81,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="module-item disabled">
+        <div className="module-item" onClick={() => navigate('/speaking')}>
           <span className="module-icon">🎤</span>
           <div className="module-info">
             <h3>Speaking Practice</h3>
-            <p>Coming soon...</p>
+            <p>Parts 1, 2 & 3 with AI feedback</p>
           </div>
         </div>
 

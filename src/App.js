@@ -7,6 +7,7 @@ import Onboarding from './components/Onboarding/Onboarding';
 import Dashboard from './components/Dashboard/Dashboard';
 import WritingPractice from './components/WritingPractice/WritingPractice';
 import EssayHistory from './pages/EssayHistory';
+import SpeakingPractice from './pages/SpeakingPractice';
 import './styles/index.css';
 
 // Protected Route Component
@@ -63,6 +64,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <EssayHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/speaking"
+        element={
+          <ProtectedRoute>
+            <SpeakingPractice />
           </ProtectedRoute>
         }
       />

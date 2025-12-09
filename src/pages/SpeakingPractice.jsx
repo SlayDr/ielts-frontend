@@ -14,7 +14,9 @@ const SpeakingPractice = () => {
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [step, setStep] = useState('select'); // select, question, recording, review, feedback
+  const [step, setStep] = useState('select');
+  const [modelAnswer, setModelAnswer] = useState(null);
+  const [loadingModel, setLoadingModel] = useState(false);
   
   const recognitionRef = useRef(null);
   const timerRef = useRef(null);
@@ -149,6 +151,39 @@ const SpeakingPractice = () => {
     }
   };
 
+  const fetchModelAnswer = async () => {
+    try {
+      setLoadingModel(true);
+      setError(null);
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`${API_URL}/api/speaking/model-answer`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          part: selectedPart,
+          question: question.question,
+          userTranscript: transcript.trim()
+        })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to get model answer');
+      }
+
+      const data = await response.json();
+      setModelAnswer(data.modelAnswer);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingModel(false);
+    }
+  };
+
   const resetPractice = () => {
     setSelectedPart(null);
     setQuestion(null);
@@ -156,6 +191,7 @@ const SpeakingPractice = () => {
     setTimer(0);
     setFeedback(null);
     setError(null);
+    setModelAnswer(null);
     setStep('select');
   };
 
@@ -165,6 +201,7 @@ const SpeakingPractice = () => {
     setTimer(0);
     setFeedback(null);
     setError(null);
+    setModelAnswer(null);
     fetchQuestion(selectedPart);
   };
 
@@ -361,6 +398,41 @@ const SpeakingPractice = () => {
               <h4>📝 Summary</h4>
               <p>{feedback.summary}</p>
             </div>
+
+            {/* Model Answer Section */}
+            {!modelAnswer ? (
+              <div className="model-answer-prompt">
+                <button 
+                  className="btn-model-answer"
+                  onClick={fetchModelAnswer}
+                  disabled={loadingModel}
+                >
+                  {loadingModel ? '⏳ Generating...' : '✨ See Model Answer (Band 8+)'}
+                </button>
+                <p className="model-answer-hint">See how a Band 8+ speaker would answer this question</p>
+              </div>
+            ) : (
+              <div className="model-answer-section">
+                <h3>✨ Band 8+ Model Answer</h3>
+                <div className="model-answer-content">
+                  <p>{modelAnswer.modelAnswer}</p>
+                </div>
+                
+                <div className="key-vocabulary">
+                  <h4>🔤 Key Vocabulary to Learn</h4>
+                  <div className="vocab-tags">
+                    {modelAnswer.keyVocabulary?.map((word, i) => (
+                      <span key={i} className="vocab-tag">{word}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="improvement-tips">
+                  <h4>💡 How to Improve</h4>
+                  <p>{modelAnswer.improvements}</p>
+                </div>
+              </div>
+            )}
 
             <div className="action-buttons">
               <button className="btn-secondary" onClick={tryNewQuestion}>

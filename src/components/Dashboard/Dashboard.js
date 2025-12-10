@@ -89,11 +89,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="module-item disabled">
+        <div className="module-item" onClick={() => navigate('/reading')}>
           <span className="module-icon">📖</span>
           <div className="module-info">
             <h3>Reading Practice</h3>
-            <p>Coming soon...</p>
+            <p>Academic passages with questions</p>
           </div>
         </div>
 

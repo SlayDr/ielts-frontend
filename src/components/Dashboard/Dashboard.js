@@ -33,7 +33,7 @@ function Dashboard() {
         <section className="modules-section">
           <h3>Practice Modules</h3>
           <div className="modules-grid">
-            <div className="module-item" onClick={() => navigate('/writing')}>
+            <div className="module-item" onClick={() => navigate('/practice')}
               <span className="module-icon">✍️</span>
               <div className="module-info">
                 <h3>Writing Practice</h3>

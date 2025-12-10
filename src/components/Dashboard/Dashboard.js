@@ -97,15 +97,13 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="module-item disabled">
-          <span className="module-icon">🎧</span>
-          <div className="module-info">
-            <h3>Listening Practice</h3>
-            <p>Coming soon...</p>
-          </div>
-        </div>
-      </div>
-    </div>
+     <div className="module-item" onClick={() => navigate('/listening')}>
+  <span className="module-icon">🎧</span>
+  <div className="module-info">
+    <h3>Listening Practice</h3>
+    <p>Audio sections with questions</p>
+  </div>
+</div>
   );
 }
 

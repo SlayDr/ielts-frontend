@@ -9,6 +9,7 @@ import WritingPractice from './components/WritingPractice/WritingPractice';
 import EssayHistory from './pages/EssayHistory';
 import SpeakingPractice from './pages/SpeakingPractice';
 import ReadingPractice from './pages/ReadingPractice';
+import ListeningPractice from './pages/ListeningPractice';
 import './styles/index.css';
 
 // Protected Route Component
@@ -84,7 +85,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
+<Route
+  path="/listening"
+  element={
+    <ProtectedRoute>
+      <ListeningPractice />
+    </ProtectedRoute>
+  }
+/>
       {/* Default Route */}
       <Route path="/" element={<Navigate to="/dashboard" />} />
       <Route path="*" element={<Navigate to="/dashboard" />} />

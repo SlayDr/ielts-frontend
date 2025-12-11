@@ -37,7 +37,7 @@ function WritingPractice() {
 
     try {
       const response = await essayAPI.evaluate(essay);
-      setFeedback(response.data);
+      setFeedback(response.data.feedback);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to evaluate essay. Please try again.');
     } finally {

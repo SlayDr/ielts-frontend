@@ -14,6 +14,7 @@ import './styles/index.css';
 import SpeakingHistory from './pages/SpeakingHistory';
 import ReadingHistory from './pages/ReadingHistory';
 import ListeningHistory from './pages/ListeningHistory';
+import PracticeModules from './pages/PracticeModules';
 // Protected Route Component
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -95,6 +96,14 @@ function AppRoutes() {
     </ProtectedRoute>
   }
   />
+  <Route
+  path="/modules"
+  element={
+    <ProtectedRoute>
+      <PracticeModules />
+    </ProtectedRoute>
+  }
+/>
   <Route
   path="/speaking-history"
   element={

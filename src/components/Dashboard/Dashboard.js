@@ -39,6 +39,8 @@ function Dashboard() {
     navigate('/login');
   };
 
+  const totalPractice = stats.essaysCount + stats.speakingCount + stats.readingCount + stats.listeningCount;
+
   return (
     <div className="dashboard">
       <header className="dashboard-header">
@@ -83,41 +85,19 @@ function Dashboard() {
           </div>
         </section>
 
-        <section className="modules-section">
-          <h3>Practice Modules</h3>
-          <div className="modules-grid">
-            <div className="module-item" onClick={() => navigate('/practice')}>
-              <span className="module-icon">✍️</span>
-              <div className="module-info">
-                <h3>Writing Practice</h3>
-                <p>Task 2 with AI feedback</p>
-              </div>
-            </div>
-
-            <div className="module-item" onClick={() => navigate('/speaking')}>
-              <span className="module-icon">🎤</span>
-              <div className="module-info">
-                <h3>Speaking Practice</h3>
-                <p>Parts 1, 2 & 3 with AI feedback</p>
-              </div>
-            </div>
-
-            <div className="module-item" onClick={() => navigate('/reading')}>
-              <span className="module-icon">📖</span>
-              <div className="module-info">
-                <h3>Reading Practice</h3>
-                <p>Academic passages with questions</p>
-              </div>
-            </div>
-
-            <div className="module-item" onClick={() => navigate('/listening')}>
-              <span className="module-icon">🎧</span>
-              <div className="module-info">
-                <h3>Listening Practice</h3>
-                <p>Audio sections with questions</p>
-              </div>
+        <section className="total-section">
+          <div className="total-card">
+            <div className="total-info">
+              <span className="total-number">{totalPractice}</span>
+              <span className="total-label">Total Practice Sessions</span>
             </div>
           </div>
+        </section>
+
+        <section className="action-section">
+          <button className="start-practice-btn" onClick={() => navigate('/modules')}>
+            🚀 Start Practicing
+          </button>
         </section>
       </main>
     </div>

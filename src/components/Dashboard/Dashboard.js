@@ -46,10 +46,11 @@ function Dashboard() {
       <header className="dashboard-header">
         <div className="header-content">
           <h1>IELTS Master</h1>
-          <div className="user-section">
-            <span className="user-name">{user?.name || 'Student'}</span>
-            <button className="logout-btn" onClick={handleLogout}>Logout</button>
-          </div>
+<div className="user-section">
+  <span className="user-name">{user?.name || 'Student'}</span>
+  <button className="settings-btn" onClick={() => navigate('/settings')}>⚙️</button>
+  <button className="logout-btn" onClick={handleLogout}>Logout</button>
+</div>
         </div>
       </header>
 

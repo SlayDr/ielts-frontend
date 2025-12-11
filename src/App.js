@@ -11,7 +11,9 @@ import SpeakingPractice from './pages/SpeakingPractice';
 import ReadingPractice from './pages/ReadingPractice';
 import ListeningPractice from './pages/ListeningPractice';
 import './styles/index.css';
-
+import SpeakingHistory from './pages/SpeakingHistory';
+import ReadingHistory from './pages/ReadingHistory';
+import ListeningHistory from './pages/ListeningHistory';
 // Protected Route Component
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -90,6 +92,29 @@ function AppRoutes() {
   element={
     <ProtectedRoute>
       <ListeningPractice />
+    </ProtectedRoute>
+  }
+  <Route
+  path="/speaking-history"
+  element={
+    <ProtectedRoute>
+      <SpeakingHistory />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/reading-history"
+  element={
+    <ProtectedRoute>
+      <ReadingHistory />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/listening-history"
+  element={
+    <ProtectedRoute>
+      <ListeningHistory />
     </ProtectedRoute>
   }
 />

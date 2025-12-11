@@ -1,0 +1,227 @@
+.listening-history {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  font-family: 'DM Sans', sans-serif;
+  padding-bottom: 4rem;
+}
+
+.listening-history .history-header {
+  background: linear-gradient(135deg, #ffa726 0%, #fb8c00 50%, #ef6c00 100%);
+  padding: 2rem 1.5rem 3rem;
+}
+
+.listening-history .header-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.listening-history .back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-family: inherit;
+}
+
+.listening-history .back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.listening-history h1 {
+  font-size: 2rem;
+  color: white;
+  margin: 0 0 0.5rem;
+}
+
+.listening-history .subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.listening-history .history-main {
+  max-width: 800px;
+  margin: -2rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.listening-history .loading-container,
+.listening-history .error-container {
+  background: white;
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.listening-history .loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #ffecb3;
+  border-top-color: #fb8c00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.listening-history .error-container button {
+  background: #fb8c00;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-family: inherit;
+}
+
+.listening-history .empty-state {
+  background: white;
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.listening-history .empty-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.listening-history .empty-state h2 {
+  color: #ef6c00;
+  margin: 0 0 0.5rem;
+}
+
+.listening-history .empty-state p {
+  color: #6b7280;
+  margin: 0 0 1.5rem;
+}
+
+.listening-history .empty-state button {
+  background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.listening-history .sessions-list {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.listening-history .list-header {
+  padding: 1rem 1.5rem;
+  background: #fff8e1;
+  border-bottom: 1px solid #ffecb3;
+}
+
+.listening-history .total-count {
+  color: #ef6c00;
+  font-weight: 600;
+}
+
+.listening-history .session-card {
+  padding: 1.5rem;
+  border-bottom: 1px solid #fff8e1;
+}
+
+.listening-history .session-card:last-child {
+  border-bottom: none;
+}
+
+.listening-history .session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.listening-history .section-title {
+  color: #1f2937;
+  margin: 0;
+  font-size: 1.1rem;
+  flex: 1;
+}
+
+.listening-history .band-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.listening-history .band-high {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.listening-history .band-medium {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.listening-history .band-low {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.listening-history .session-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.listening-history .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.listening-history .stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ef6c00;
+}
+
+.listening-history .stat-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.listening-history .session-meta {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.listening-history .date {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .listening-history h1 {
+    font-size: 1.5rem;
+  }
+
+  .listening-history .session-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .listening-history .session-stats {
+    gap: 1rem;
+  }
+}

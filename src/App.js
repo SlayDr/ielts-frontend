@@ -16,6 +16,8 @@ import ReadingHistory from './pages/ReadingHistory';
 import ListeningHistory from './pages/ListeningHistory';
 import PracticeModules from './pages/PracticeModules';
 import ProfileSettings from './pages/ProfileSettings';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 // Protected Route Component
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -39,7 +41,8 @@ function AppRoutes() {
       {/* Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-
+<Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="/reset-password/:token" element={<ResetPassword />} />
       {/* Protected Routes */}
       <Route
         path="/onboarding"

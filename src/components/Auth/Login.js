@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
+import { Link, useNavigate } from 'react-router-dom';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -64,7 +64,7 @@ function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
+<Link to="/forgot-password" className="forgot-link">Forgot Password?</Link>
         <p className="text-center mt-20">
           Don't have an account? <Link to="/signup" className="link">Sign Up</Link>
         </p>

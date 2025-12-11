@@ -94,6 +94,7 @@ function AppRoutes() {
       <ListeningPractice />
     </ProtectedRoute>
   }
+  />
   <Route
   path="/speaking-history"
   element={

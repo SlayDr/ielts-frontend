@@ -28,6 +28,7 @@ export const authAPI = {
 export const essayAPI = {
   evaluate: (essay) => api.post('/api/evaluate-essay', { essay }),
   rewrite: (essay, question, feedback) => api.post('/api/rewrite-essay', { essay, question, feedback }),
+  evaluateTask1: (data) => api.post('/api/writing-task1/submit', data),
 };
 
 export default api;

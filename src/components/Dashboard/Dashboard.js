@@ -66,7 +66,7 @@ function Dashboard() {
             <div className="stat-card" onClick={() => navigate('/history')}>
               <span className="stat-icon">✍️</span>
               <span className="stat-number">{stats.essaysCount}</span>
-              <span className="stat-label">Essays</span>
+              <span className="stat-label">Writing</span>
             </div>
             <div className="stat-card" onClick={() => navigate('/speaking-history')}>
               <span className="stat-icon">🎤</span>

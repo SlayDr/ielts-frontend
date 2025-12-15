@@ -92,7 +92,9 @@
 /* Stats Section */
 .stats-section {
   margin-bottom: 2rem;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .stats-section h3 {
@@ -101,15 +103,14 @@
   font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
-
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+  width: 100%;
   max-width: 400px;
-  margin: 0 auto;
 }
 
 .stat-card {
@@ -194,9 +195,8 @@
 /* Total Section */
 .total-section {
   margin-bottom: 2rem;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+  justify-content: center;
 }
 
 .total-card {
@@ -205,6 +205,8 @@
   padding: 1.5rem;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 400px;
 }
 
 .total-info {
@@ -280,6 +282,10 @@
 
   .stat-number {
     font-size: 1.75rem;
+  }
+
+  .total-card {
+    max-width: 100%;
   }
 
   .total-number {

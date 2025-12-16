@@ -280,11 +280,11 @@ const ReadingPractice = () => {
                 <h3>Full Test Mode</h3>
                 <p className="mode-time">⏱️ 60 minutes</p>
                 <p className="mode-description">
-                  Complete IELTS Reading test with 3 passages and 40 questions. 
+                  Complete IELTS Reading test with 3 passages and 42 questions. 
                 </p>
                 <ul className="mode-features">
                   <li>3 passages</li>
-                  <li>40 questions total</li>
+                  <li>42 questions total</li>
                   <li>Real exam timing</li>
                   <li>Band score calculation</li>
                 </ul>

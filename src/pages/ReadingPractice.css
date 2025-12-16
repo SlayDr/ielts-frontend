@@ -719,14 +719,14 @@
   color: #ffffff;
   font-size: 2rem;
   margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 }
 
 .mode-selection .selection-subtitle {
   color: #ffffff;
   font-size: 1.1rem;
   margin-bottom: 40px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 }
 
 .mode-options {

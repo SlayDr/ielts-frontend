@@ -338,11 +338,8 @@ const ReadingPractice = () => {
                     onClick={() => selectFullTest(test.id)}
                   >
                     <div className="passage-header">
-                      <span className={`difficulty-badge ${getDifficultyColor(test.difficulty)}`}>
-                        {test.difficulty}
-                      </span>
                       <span className="question-count">{test.totalQuestions} questions</span>
-                    </div>
+                     </div>   
                     <h3>{test.title}</h3>
                     <div className="test-passages">
                       {test.passages.map((p, idx) => (
@@ -368,9 +365,6 @@ const ReadingPractice = () => {
                     onClick={() => selectPassage(passage.id)}
                   >
                     <div className="passage-header">
-                      <span className={`difficulty-badge ${getDifficultyColor(passage.difficulty)}`}>
-                        {passage.difficulty}
-                      </span>
                       <span className="question-count">{passage.questionCount} questions</span>
                     </div>
                     <h3>{passage.title}</h3>
@@ -432,9 +426,6 @@ const ReadingPractice = () => {
             <div className="reading-toolbar">
               <div className="passage-info">
                 <h2>{currentPassage?.title}</h2>
-                <span className={`difficulty-badge ${getDifficultyColor(currentPassage?.difficulty)}`}>
-                  {currentPassage?.difficulty}
-                </span>
               </div>
             </div>
 

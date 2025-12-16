@@ -33,10 +33,11 @@
 }
 
 .selection-subtitle {
-  color: #ffeb3b;
+  color: #ffffff;
   font-size: 1.3rem;
   margin-bottom: 40px;
-  font-weight: 500;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .task-options {

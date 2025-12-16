@@ -83,7 +83,7 @@ useEffect(() => {
       setSelectedPassage(data.passage);
       setAnswers({});
       setResults(null);
-      setTimer(0);
+      setTimer(60 * 60);
       setIsTimerRunning(true);
       setStep('reading');
     } catch (err) {

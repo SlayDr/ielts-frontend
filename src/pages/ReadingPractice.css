@@ -709,3 +709,279 @@
     width: 100%;
   }
 }
+/* Mode Selection Styles */
+.mode-selection {
+  text-align: center;
+  padding: 20px;
+}
+
+.mode-selection h2 {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.mode-selection .selection-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+}
+
+.mode-options {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.mode-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  width: 320px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: left;
+  position: relative;
+}
+
+.mode-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.mode-card.featured {
+  border: 3px solid #667eea;
+}
+
+.mode-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.mode-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.mode-card h3 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.mode-time {
+  color: #667eea;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.mode-description {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.mode-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.mode-features li {
+  padding: 8px 0;
+  color: #555;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #eee;
+}
+
+.mode-features li:last-child {
+  border-bottom: none;
+}
+
+.mode-features li::before {
+  content: '✓';
+  color: #4CAF50;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.mode-btn {
+  width: 100%;
+  padding: 15px;
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.mode-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Full Test Card Styles */
+.fulltest-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.test-passages {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.test-passage-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+.test-passage-item:last-child {
+  border-bottom: none;
+}
+
+.passage-number {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.passage-title {
+  flex: 1;
+  color: #333;
+}
+
+.passage-questions {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+/* Passage Tabs for Full Test */
+.passage-tabs {
+  display: flex;
+  gap: 10px;
+  padding: 15px 20px;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.passage-tab {
+  padding: 12px 25px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.passage-tab:hover {
+  background: #e0e0e0;
+}
+
+.passage-tab.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+/* Passage Results */
+.passage-results {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 1px solid #eee;
+}
+
+.passage-results h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.passage-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.pr-title {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.pr-score {
+  font-weight: 600;
+  color: #667eea;
+}
+
+/* Timer Warning */
+.timer-warning {
+  background: #ff6b6b !important;
+  color: white !important;
+  animation: pulse 1s infinite;
+}
+
+.timer-warning .timer-value {
+  color: white !important;
+}
+
+.timer-alert {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mode-options {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .mode-card {
+    width: 100%;
+    max-width: 350px;
+  }
+  
+  .passage-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .passage-tab {
+    flex: 1;
+    min-width: 100px;
+  }
+}

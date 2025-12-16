@@ -13,7 +13,7 @@ const ReadingPractice = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [step, setStep] = useState('select'); // select, reading, results
-  const [timer, setTimer] = useState(0);
+  const [timer, setTimer] = useState(60 * 60); // 60 minutes in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   
   const timerRef = useRef(null);
@@ -25,10 +25,21 @@ const ReadingPractice = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isTimerRunning) {
+useEffect(() => {
+    if (isTimerRunning && timer > 0) {
       timerRef.current = setInterval(() => {
-        setTimer(prev => prev + 1);
+        setTimer(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            setIsTimerRunning(false);
+            // Auto-submit when time runs out
+            if (selectedPassage) {
+              submitAnswers();
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -37,7 +48,6 @@ const ReadingPractice = () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [isTimerRunning]);
-
   const fetchPassages = async () => {
     try {
       setLoading(true);
@@ -126,7 +136,7 @@ const ReadingPractice = () => {
     setSelectedPassage(null);
     setAnswers({});
     setResults(null);
-    setTimer(0);
+   setTimer(60 * 60); // Reset to 60 minutes
     setIsTimerRunning(false);
     setStep('select');
   };
@@ -217,9 +227,10 @@ const ReadingPractice = () => {
                   {selectedPassage.difficulty}
                 </span>
               </div>
-              <div className="timer-display">
-                <span className="timer-icon">⏱️</span>
-                <span className="timer-value">{formatTime(timer)}</span>
+              <div className={`timer-display ${timer < 300 ? 'timer-warning' : ''}`}>
+                  <span className="timer-icon">⏱</span>
+                  <span className="timer-value">{formatTime(timer)}</span>
+                   {timer < 300 && <span className="timer-alert">⚠️ Less than 5 min!</span>}
               </div>
             </div>
 

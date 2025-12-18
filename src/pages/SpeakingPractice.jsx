@@ -171,17 +171,16 @@ const SpeakingPractice = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`${API_URL}/api/speaking/submit`, {
+      const response = await fetch(`${API_URL}/api/speaking/evaluate`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          vispiSpeakingId: question.id,
           part: selectedPart,
           question: question.question,
-          response: transcript,
+          transcript: transcript,
           duration: timer
         })
       });

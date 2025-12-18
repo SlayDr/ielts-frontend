@@ -217,8 +217,9 @@ const SpeakingPractice = () => {
 
     if (!response.ok) throw new Error('Failed to fetch model answer');
 
-    const data = await response.json();
-    setModelAnswer(data.modelAnswer);
+  const data = await response.json();
+const answer = data.modelAnswer || data.model_answer || data.answer || 'Model answer not available';
+setModelAnswer(typeof answer === 'object' ? JSON.stringify(answer, null, 2) : answer);
   } catch (err) {
     setError(err.message);
   } finally {

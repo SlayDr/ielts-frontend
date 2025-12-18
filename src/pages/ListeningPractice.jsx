@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ListeningPractice.css';
 
@@ -6,19 +6,52 @@ const API_URL = process.env.REACT_APP_API_URL || 'https://ielts-backend-0u1s.onr
 
 const ListeningPractice = () => {
   const navigate = useNavigate();
+  const [mode, setMode] = useState(null); // null, 'practice', 'fulltest'
   const [sections, setSections] = useState([]);
+  const [fullTests, setFullTests] = useState([]);
   const [selectedSection, setSelectedSection] = useState(null);
+  const [selectedTest, setSelectedTest] = useState(null);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [step, setStep] = useState('select'); // select, listening, results
+  const [timer, setTimer] = useState(30 * 60); // 30 minutes for full test
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
 
+  const timerRef = useRef(null);
+
   useEffect(() => {
-    fetchSections();
-  }, []);
+    if (mode === 'practice') {
+      fetchSections();
+    } else if (mode === 'fulltest') {
+      fetchFullTests();
+    }
+  }, [mode]);
+
+  useEffect(() => {
+    if (isTimerRunning && timer > 0) {
+      timerRef.current = setInterval(() => {
+        setTimer(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            setIsTimerRunning(false);
+            handleSubmit();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isTimerRunning]);
 
   const fetchSections = async () => {
     try {
@@ -27,11 +60,26 @@ const ListeningPractice = () => {
       const response = await fetch(`${API_URL}/api/listening/sections`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
       if (!response.ok) throw new Error('Failed to fetch sections');
-      
       const data = await response.json();
       setSections(data.sections);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchFullTests = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/listening/full-tests`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch full tests');
+      const data = await response.json();
+      setFullTests(data.tests);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -44,18 +92,42 @@ const ListeningPractice = () => {
       setLoading(true);
       setError(null);
       const token = localStorage.getItem('token');
-      
       const response = await fetch(`${API_URL}/api/listening/sections/${sectionId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-
       if (!response.ok) throw new Error('Failed to fetch section');
-      
       const data = await response.json();
       setSelectedSection(data.section);
       setAnswers({});
       setResults(null);
       setHasPlayed(false);
+      setTimer(10 * 60); // 10 minutes for single section
+      setIsTimerRunning(true);
+      setStep('listening');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectFullTest = async (testId) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/listening/full-tests/${testId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch test');
+      const data = await response.json();
+      setSelectedTest(data.test);
+      setCurrentSectionIndex(0);
+      setAnswers({});
+      setResults(null);
+      setHasPlayed(false);
+      setTimer(30 * 60); // 30 minutes for full test
+      setIsTimerRunning(true);
       setStep('listening');
     } catch (err) {
       setError(err.message);
@@ -65,21 +137,17 @@ const ListeningPractice = () => {
   };
 
   const playAudio = () => {
-    if (!selectedSection || isPlaying) return;
+    const currentSection = getCurrentSection();
+    if (!currentSection || isPlaying) return;
 
     setIsPlaying(true);
-    const utterance = new SpeechSynthesisUtterance(selectedSection.transcript);
+    const utterance = new SpeechSynthesisUtterance(currentSection.transcript);
     utterance.rate = 0.9;
     utterance.pitch = 1;
-    
+
     utterance.onend = () => {
       setIsPlaying(false);
       setHasPlayed(true);
-    };
-
-    utterance.onerror = () => {
-      setIsPlaying(false);
-      setError('Audio playback failed. Please try again.');
     };
 
     window.speechSynthesis.speak(utterance);
@@ -90,36 +158,54 @@ const ListeningPractice = () => {
     setIsPlaying(false);
   };
 
-  const handleAnswerChange = (questionId, value) => {
+  const handleAnswerChange = (sectionId, questionId, answer) => {
     setAnswers(prev => ({
       ...prev,
-      [questionId]: value
+      [`${sectionId}-${questionId}`]: answer
     }));
   };
 
-  const submitAnswers = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      stopAudio();
-      
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/listening/submit`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          sectionId: selectedSection.id,
-          answers
-        })
-      });
+  const handleSubmit = async () => {
+    setIsTimerRunning(false);
+    stopAudio();
+    setLoading(true);
 
-      if (!response.ok) throw new Error('Failed to submit answers');
-      
-      const data = await response.json();
-      setResults(data);
+    try {
+      const token = localStorage.getItem('token');
+
+      if (mode === 'fulltest' && selectedTest) {
+        const response = await fetch(`${API_URL}/api/listening/full-tests/submit`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            testId: selectedTest.id,
+            answers,
+            timeSpent: 1800 - timer
+          })
+        });
+        if (!response.ok) throw new Error('Failed to submit test');
+        const data = await response.json();
+        setResults(data.results);
+      } else if (selectedSection) {
+        const response = await fetch(`${API_URL}/api/listening/submit`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            sectionId: selectedSection.id,
+            answers,
+            timeSpent: 600 - timer
+          })
+        });
+        if (!response.ok) throw new Error('Failed to submit answers');
+        const data = await response.json();
+        setResults(data);
+      }
       setStep('results');
     } catch (err) {
       setError(err.message);
@@ -130,20 +216,40 @@ const ListeningPractice = () => {
 
   const resetPractice = () => {
     stopAudio();
+    setMode(null);
     setSelectedSection(null);
+    setSelectedTest(null);
+    setCurrentSectionIndex(0);
     setAnswers({});
     setResults(null);
+    setTimer(30 * 60);
+    setIsTimerRunning(false);
     setHasPlayed(false);
     setStep('select');
   };
 
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case 'Easy': return 'difficulty-easy';
-      case 'Medium': return 'difficulty-medium';
-      case 'Hard': return 'difficulty-hard';
-      default: return '';
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getCurrentSection = () => {
+    if (mode === 'fulltest' && selectedTest) {
+      return selectedTest.sections[currentSectionIndex];
     }
+    return selectedSection;
+  };
+
+  const getTotalQuestions = () => {
+    if (mode === 'fulltest' && selectedTest) {
+      return selectedTest.totalQuestions;
+    }
+    return selectedSection?.questions?.length || 0;
+  };
+
+  const getAnsweredCount = () => {
+    return Object.keys(answers).length;
   };
 
   const getScoreColor = (percentage) => {
@@ -152,38 +258,125 @@ const ListeningPractice = () => {
     return 'score-low';
   };
 
-  return (
-    <div className="listening-practice">
-      <header className="listening-header">
-        <div className="header-content">
-          <button className="back-btn" onClick={() => { stopAudio(); navigate('/dashboard'); }}>
-            ← Dashboard
-          </button>
-          <h1>🎧 Listening Practice</h1>
-          <p className="subtitle">Practice IELTS Listening with audio</p>
-        </div>
-      </header>
-
-      <main className="listening-main">
-        {error && (
-          <div className="error-banner">
-            <span>⚠️ {error}</span>
-            <button onClick={() => setError(null)}>×</button>
+  // Mode Selection Screen
+  if (!mode) {
+    return (
+      <div className="listening-practice">
+        <header className="listening-header">
+          <div className="header-content">
+            <button className="back-btn" onClick={() => navigate('/dashboard')}>
+              ← Dashboard
+            </button>
+            <h1>🎧 Listening Practice</h1>
+            <p className="subtitle">Practice IELTS Academic Listening</p>
           </div>
-        )}
+        </header>
 
-        {/* Section Selection */}
-        {step === 'select' && (
-          <section className="section-selection">
-            <h2>Choose a Listening Section</h2>
-            <p className="selection-subtitle">Select a section to practice your listening skills</p>
-            
-            {loading ? (
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
-                <p>Loading sections...</p>
+        <main className="listening-main">
+          <section className="mode-selection">
+            <h2>Choose Your Practice Mode</h2>
+            <p className="selection-subtitle">Select how you want to practice today</p>
+
+            <div className="mode-options">
+              <div className="mode-card" onClick={() => setMode('practice')}>
+                <div className="mode-icon">🎵</div>
+                <h3>Practice Mode</h3>
+                <p className="mode-time">⏱️ 10 minutes per section</p>
+                <p className="mode-description">
+                  Practice with individual sections. Great for focused practice on specific question types.
+                </p>
+                <ul className="mode-features">
+                  <li>Single section</li>
+                  <li>10 questions</li>
+                  <li>Immediate feedback</li>
+                  <li>Choose your topic</li>
+                </ul>
+                <button className="mode-btn">Start Practice</button>
               </div>
-            ) : (
+
+              <div className="mode-card featured" onClick={() => setMode('fulltest')}>
+                <div className="mode-badge">IELTS Format</div>
+                <div className="mode-icon">📻</div>
+                <h3>Full Test Mode</h3>
+                <p className="mode-time">⏱️ 30 minutes</p>
+                <p className="mode-description">
+                  Complete IELTS Listening test with 4 sections and 40 questions.
+                </p>
+                <ul className="mode-features">
+                  <li>4 sections</li>
+                  <li>40 questions total</li>
+                  <li>Real exam timing</li>
+                  <li>Band score calculation</li>
+                </ul>
+                <button className="mode-btn primary">Start Full Test</button>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
+  // Section/Test Selection Screen
+  if (step === 'select') {
+    return (
+      <div className="listening-practice">
+        <header className="listening-header">
+          <div className="header-content">
+            <button className="back-btn" onClick={resetPractice}>
+              ← Back
+            </button>
+            <h1>🎧 {mode === 'fulltest' ? 'Full Listening Tests' : 'Listening Sections'}</h1>
+            <p className="subtitle">
+              {mode === 'fulltest'
+                ? 'Choose a complete IELTS Listening test'
+                : 'Select a section to practice'}
+            </p>
+          </div>
+        </header>
+
+        <main className="listening-main">
+          {error && (
+            <div className="error-banner">
+              <span>⚠️ {error}</span>
+              <button onClick={() => setError(null)}>×</button>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Loading...</p>
+            </div>
+          ) : mode === 'fulltest' ? (
+            <section className="section-selection">
+              <div className="sections-grid">
+                {fullTests.map(test => (
+                  <div
+                    key={test.id}
+                    className="section-card fulltest-card"
+                    onClick={() => selectFullTest(test.id)}
+                  >
+                    <div className="section-header">
+                      <span className="question-count">{test.totalQuestions} questions</span>
+                    </div>
+                    <h3>{test.title}</h3>
+                    <div className="test-sections">
+                      {test.sections.map((s, idx) => (
+                        <div key={s.id} className="test-section-item">
+                          <span className="section-number">Part {idx + 1}:</span>
+                          <span className="section-title">{s.title}</span>
+                          <span className="section-questions">({s.questionCount} Q)</span>
+                        </div>
+                      ))}
+                    </div>
+                    <button className="start-btn">Start Test →</button>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : (
+            <section className="section-selection">
               <div className="sections-grid">
                 {sections.map(section => (
                   <div
@@ -193,183 +386,230 @@ const ListeningPractice = () => {
                   >
                     <div className="section-header">
                       <span className="part-badge">Part {section.part}</span>
-                      <span className={`difficulty-badge ${getDifficultyColor(section.difficulty)}`}>
-                        {section.difficulty}
-                      </span>
+                      <span className="question-count">{section.questionCount} questions</span>
                     </div>
                     <h3>{section.title}</h3>
                     <p className="section-description">{section.description}</p>
-                    <div className="section-footer">
-                      <span className="question-count">{section.questionCount} questions</span>
-                      <button className="start-btn">Start Practice →</button>
-                    </div>
+                    <button className="start-btn">Start Practice →</button>
                   </div>
                 ))}
               </div>
-            )}
-          </section>
-        )}
+            </section>
+          )}
+        </main>
+      </div>
+    );
+  }
 
-        {/* Listening Section */}
-        {step === 'listening' && selectedSection && (
+  // Listening/Questions Screen
+  if (step === 'listening') {
+    const currentSection = getCurrentSection();
+
+    return (
+      <div className="listening-practice">
+        <header className="listening-header">
+          <div className="header-content">
+            <button className="back-btn" onClick={resetPractice}>
+              ← Exit
+            </button>
+            <h1>🎧 Listening Practice</h1>
+            <div className={`timer-display ${timer < 300 ? 'timer-warning' : ''}`}>
+              <span className="timer-icon">⏱</span>
+              <span className="timer-value">{formatTime(timer)}</span>
+              {timer < 300 && <span className="timer-alert">⚠️ Less than 5 min!</span>}
+            </div>
+          </div>
+        </header>
+
+        <main className="listening-main">
+          {error && (
+            <div className="error-banner">
+              <span>⚠️ {error}</span>
+              <button onClick={() => setError(null)}>×</button>
+            </div>
+          )}
+
+          {mode === 'fulltest' && selectedTest && (
+            <div className="section-tabs">
+              {selectedTest.sections.map((s, idx) => (
+                <button
+                  key={s.id}
+                  className={`section-tab ${currentSectionIndex === idx ? 'active' : ''}`}
+                  onClick={() => {
+                    stopAudio();
+                    setCurrentSectionIndex(idx);
+                    setHasPlayed(false);
+                  }}
+                >
+                  Part {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
+
           <section className="listening-section">
             <div className="listening-toolbar">
               <div className="section-info">
-                <h2>{selectedSection.title}</h2>
-                <div className="badges">
-                  <span className="part-badge">Part {selectedSection.part}</span>
-                  <span className={`difficulty-badge ${getDifficultyColor(selectedSection.difficulty)}`}>
-                    {selectedSection.difficulty}
-                  </span>
-                </div>
+                <h2>{currentSection?.title}</h2>
+                <p className="section-description">{currentSection?.description}</p>
               </div>
             </div>
 
             <div className="audio-player">
-              <div className="player-content">
-                <div className={`player-icon ${isPlaying ? 'playing' : ''}`}>
-                  🎧
-                </div>
-                <div className="player-info">
-                  <h3>Audio Recording</h3>
-                  <p>{selectedSection.description}</p>
-                </div>
-                <div className="player-controls">
-                  {!isPlaying ? (
-                    <button className="play-btn" onClick={playAudio}>
-                      ▶ {hasPlayed ? 'Replay' : 'Play'} Audio
-                    </button>
-                  ) : (
-                    <button className="stop-btn" onClick={stopAudio}>
-                      ⏹ Stop
-                    </button>
-                  )}
-                </div>
+              <div className="audio-controls">
+                {!hasPlayed ? (
+                  <button
+                    className={`play-btn ${isPlaying ? 'playing' : ''}`}
+                    onClick={isPlaying ? stopAudio : playAudio}
+                  >
+                    {isPlaying ? '⏹ Stop' : '▶ Play Audio'}
+                  </button>
+                ) : (
+                  <div className="played-message">
+                    ✓ Audio played - Answer the questions below
+                  </div>
+                )}
               </div>
               {isPlaying && (
                 <div className="playing-indicator">
-                  <div className="wave"></div>
-                  <div className="wave"></div>
-                  <div className="wave"></div>
-                  <div className="wave"></div>
-                  <div className="wave"></div>
-                  <span>Playing audio...</span>
+                  <span className="pulse"></span> Playing audio...
                 </div>
               )}
-              <p className="audio-note">
-                💡 Tip: Listen carefully! In the real IELTS test, you can only hear the audio once.
-              </p>
             </div>
 
-            <div className="questions-container">
-              <h3>Questions</h3>
-              <div className="questions-list">
-                {selectedSection.questions.map((q, idx) => (
-                  <div key={q.id} className="question-item">
-                    <div className="question-number">Question {idx + 1}</div>
-                    <p className="question-text">{q.question}</p>
-                    
-                    {q.type === 'multiple-choice' && (
-                      <div className="options-list">
-                        {q.options.map((option, optIdx) => (
-                          <label key={optIdx} className="option-label">
-                            <input
-                              type="radio"
-                              name={`question-${q.id}`}
-                              value={optIdx}
-                              checked={answers[q.id] === optIdx.toString()}
-                              onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                            />
-                            <span className="option-text">{option}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
+            <div className="listening-content">
+              <div className="questions-container">
+                <h3>Questions</h3>
+                <div className="questions-list">
+                  {currentSection?.questions?.map((q, idx) => (
+                    <div key={q.id} className="question-item">
+                      <div className="question-number">Question {idx + 1}</div>
+                      <p className="question-text">{q.question}</p>
 
-                    {q.type === 'fill-blank' && (
-                      <input
-                        type="text"
-                        className="fill-blank-input"
-                        placeholder="Type your answer..."
-                        value={answers[q.id] || ''}
-                        onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                      />
-                    )}
-                  </div>
-                ))}
+                      {q.type === 'multiple-choice' && (
+                        <div className="options-list">
+                          {q.options?.map((option, optIdx) => (
+                            <label key={optIdx} className="option-label">
+                              <input
+                                type="radio"
+                                name={`${currentSection.id}-${q.id}`}
+                                value={optIdx}
+                                checked={answers[`${currentSection.id}-${q.id}`] === optIdx}
+                                onChange={() => handleAnswerChange(currentSection.id, q.id, optIdx)}
+                              />
+                              <span className="option-text">{option}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+
+                      {q.type === 'fill-blank' && (
+                        <input
+                          type="text"
+                          className="fill-blank-input"
+                          placeholder="Type your answer..."
+                          value={answers[`${currentSection.id}-${q.id}`] || ''}
+                          onChange={(e) => handleAnswerChange(currentSection.id, q.id, e.target.value)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="submit-section">
+                  <p className="answered-count">
+                    Answered: {getAnsweredCount()} / {getTotalQuestions()}
+                  </p>
+                  <button
+                    className="submit-btn"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                  >
+                    {loading ? 'Submitting...' : 'Submit Answers'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
+  // Results Screen
+  if (step === 'results') {
+    const percentage = results?.percentage || Math.round((results?.score / results?.totalQuestions) * 100) || 0;
+
+    return (
+      <div className="listening-practice">
+        <header className="listening-header">
+          <div className="header-content">
+            <button className="back-btn" onClick={() => navigate('/dashboard')}>
+              ← Dashboard
+            </button>
+            <h1>🎧 Listening Results</h1>
+          </div>
+        </header>
+
+        <main className="listening-main">
+          <section className="results-section">
+            <div className="results-card">
+              <h2>Your Results</h2>
+
+              <div className="score-display">
+                <div className={`score-circle ${getScoreColor(percentage)}`}>
+                  <span className="score-value">{results?.bandScore || results?.band || '-'}</span>
+                  <span className="score-label">Band</span>
+                </div>
               </div>
 
-              <div className="submit-section">
-                <p className="answered-count">
-                  Answered: {Object.keys(answers).length} / {selectedSection.questions.length}
-                </p>
-                <button 
-                  className="btn-submit"
-                  onClick={submitAnswers}
-                  disabled={loading}
-                >
-                  {loading ? 'Submitting...' : 'Submit Answers'}
+              <div className="score-details">
+                <div className="detail-item">
+                  <span className="detail-label">Correct Answers</span>
+                  <span className="detail-value">
+                    {results?.totalCorrect || results?.score} / {results?.totalQuestions}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Percentage</span>
+                  <span className="detail-value">{percentage}%</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Time Spent</span>
+                  <span className="detail-value">
+                    {formatTime(results?.timeSpent || 0)}
+                  </span>
+                </div>
+              </div>
+
+              {results?.sectionResults && (
+                <div className="section-results">
+                  <h3>Results by Section</h3>
+                  {results.sectionResults.map((sr, idx) => (
+                    <div key={sr.sectionId} className="section-result-item">
+                      <span className="sr-title">Part {idx + 1}: {sr.title}</span>
+                      <span className="sr-score">{sr.correct} / {sr.total}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="results-actions">
+                <button className="action-btn" onClick={resetPractice}>
+                  Practice Again
+                </button>
+                <button className="action-btn secondary" onClick={() => navigate('/listening-history')}>
+                  View History
                 </button>
               </div>
             </div>
           </section>
-        )}
+        </main>
+      </div>
+    );
+  }
 
-        {/* Results Section */}
-        {step === 'results' && results && (
-          <section className="results-section">
-            <h2>Your Results</h2>
-            
-            <div className="score-overview">
-              <div className={`score-circle ${getScoreColor(results.percentage)}`}>
-                <span className="score-number">{results.score}/{results.totalQuestions}</span>
-                <span className="score-percentage">{results.percentage}%</span>
-              </div>
-              <div className="score-details">
-                <div className="band-score">
-                  <span className="band-label">Band Score</span>
-                  <span className="band-value">{results.bandScore}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="results-breakdown">
-              <h3>Answer Review</h3>
-              {results.results.map((result, idx) => (
-                <div key={idx} className={`result-item ${result.isCorrect ? 'correct' : 'incorrect'}`}>
-                  <div className="result-header">
-                    <span className="result-number">Q{idx + 1}</span>
-                    <span className={`result-badge ${result.isCorrect ? 'badge-correct' : 'badge-incorrect'}`}>
-                      {result.isCorrect ? '✓ Correct' : '✗ Incorrect'}
-                    </span>
-                  </div>
-                  <p className="result-question">{result.question}</p>
-                  <div className="result-answers">
-                    <p><strong>Your answer:</strong> {result.userAnswer || 'Not answered'}</p>
-                    {!result.isCorrect && (
-                      <p><strong>Correct answer:</strong> {result.correctAnswer}</p>
-                    )}
-                  </div>
-                  <div className="result-explanation">
-                    <strong>Explanation:</strong> {result.explanation}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="action-buttons">
-              <button className="btn-secondary" onClick={resetPractice}>
-                🎧 Try Another Section
-              </button>
-              <button className="btn-primary" onClick={() => navigate('/dashboard')}>
-                🏠 Back to Dashboard
-              </button>
-            </div>
-          </section>
-        )}
-      </main>
-    </div>
-  );
+  return null;
 };
 
 export default ListeningPractice;

@@ -197,25 +197,34 @@ const SpeakingPractice = () => {
     }
   };
 
-  const fetchModelAnswer = async () => {
-    try {
-      setLoadingModel(true);
-      const token = localStorage.getItem('token');
+ const fetchModelAnswer = async () => {
+  try {
+    setLoadingModel(true);
+    const token = localStorage.getItem('token');
 
-      const response = await fetch(`${API_URL}/api/speaking/model-answer/${question.id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+    const response = await fetch(`${API_URL}/api/speaking/model-answer`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        part: selectedPart,
+        question: question.question,
+        userTranscript: transcript
+      })
+    });
 
-      if (!response.ok) throw new Error('Failed to fetch model answer');
+    if (!response.ok) throw new Error('Failed to fetch model answer');
 
-      const data = await response.json();
-      setModelAnswer(data.modelAnswer);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoadingModel(false);
-    }
-  };
+    const data = await response.json();
+    setModelAnswer(data.modelAnswer);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoadingModel(false);
+  }
+};
 
   const resetPractice = () => {
     if (timerRef.current) clearInterval(timerRef.current);

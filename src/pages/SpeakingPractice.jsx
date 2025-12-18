@@ -14,22 +14,27 @@ const SpeakingPractice = () => {
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [step, setStep] = useState('select');
+  const [step, setStep] = useState('select'); // select, question, preparing, recording, feedback
   const [modelAnswer, setModelAnswer] = useState(null);
   const [loadingModel, setLoadingModel] = useState(false);
-  
+  const [prepTimer, setPrepTimer] = useState(60); // 1 minute prep time for Part 2
+  const [speakTimer, setSpeakTimer] = useState(120); // 2 minutes speak time for Part 2
+  const [notes, setNotes] = useState(''); // Notes during prep time
+
   const recognitionRef = useRef(null);
   const timerRef = useRef(null);
+  const prepTimerRef = useRef(null);
 
   const partInfo = {
-    1: { title: 'Part 1: Introduction', duration: '4-5 minutes', description: 'Answer questions about familiar topics' },
-    2: { title: 'Part 2: Long Turn', duration: '3-4 minutes', description: 'Speak for 1-2 minutes on a topic card' },
-    3: { title: 'Part 3: Discussion', duration: '4-5 minutes', description: 'Discuss abstract ideas related to Part 2' }
+    1: { title: 'Part 1: Introduction', duration: '4-5 minutes', description: 'Answer questions about familiar topics like home, family, work, studies, and interests.', prepTime: 0, speakTime: 60 },
+    2: { title: 'Part 2: Long Turn (Cue Card)', duration: '3-4 minutes', description: 'Speak for 1-2 minutes on a given topic after 1 minute of preparation.', prepTime: 60, speakTime: 120 },
+    3: { title: 'Part 3: Discussion', duration: '4-5 minutes', description: 'Discuss abstract ideas related to the Part 2 topic in more depth.', prepTime: 0, speakTime: 120 }
   };
 
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (prepTimerRef.current) clearInterval(prepTimerRef.current);
       if (recognitionRef.current) recognitionRef.current.stop();
     };
   }, []);
@@ -39,13 +44,13 @@ const SpeakingPractice = () => {
       setLoading(true);
       setError(null);
       const token = localStorage.getItem('token');
-      
+
       const response = await fetch(`${API_URL}/api/speaking/questions/${part}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (!response.ok) throw new Error('Failed to fetch question');
-      
+
       const data = await response.json();
       setQuestion(data.question);
       setStep('question');
@@ -54,6 +59,29 @@ const SpeakingPractice = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const startPreparation = () => {
+    setPrepTimer(60);
+    setNotes('');
+    setStep('preparing');
+    
+    prepTimerRef.current = setInterval(() => {
+      setPrepTimer(prev => {
+        if (prev <= 1) {
+          clearInterval(prepTimerRef.current);
+          // Auto-start recording after prep time ends
+          startRecording();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const skipPreparation = () => {
+    if (prepTimerRef.current) clearInterval(prepTimerRef.current);
+    startRecording();
   };
 
   const startRecording = () => {
@@ -86,17 +114,38 @@ const SpeakingPractice = () => {
     recognitionRef.current.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
       if (event.error !== 'no-speech') {
-        setError('Speech recognition error: ' + event.error);
+        setError(`Speech recognition error: ${event.error}`);
+      }
+    };
+
+    recognitionRef.current.onend = () => {
+      if (isRecording) {
+        recognitionRef.current.start();
       }
     };
 
     recognitionRef.current.start();
     setIsRecording(true);
+    setTranscript('');
     setStep('recording');
+
+    // Set timer based on part
+    const speakTime = selectedPart === 2 ? 120 : 60;
+    setSpeakTimer(speakTime);
     setTimer(0);
 
     timerRef.current = setInterval(() => {
-      setTimer(prev => prev + 1);
+      setTimer(prev => {
+        const newTime = prev + 1;
+        setSpeakTimer(speakTime - newTime);
+        
+        // Auto-stop for Part 2 after 2 minutes
+        if (selectedPart === 2 && newTime >= 120) {
+          stopRecording();
+          return 120;
+        }
+        return newTime;
+      });
     }, 1000);
   };
 
@@ -108,41 +157,39 @@ const SpeakingPractice = () => {
       clearInterval(timerRef.current);
     }
     setIsRecording(false);
-    setStep('review');
+    submitResponse();
   };
 
-  const submitForFeedback = async () => {
+  const submitResponse = async () => {
     if (!transcript.trim()) {
-      setError('No speech detected. Please try recording again.');
+      setError('No speech detected. Please try again.');
+      setStep('question');
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`${API_URL}/api/speaking/evaluate`, {
+      const response = await fetch(`${API_URL}/api/speaking/submit`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          vispiSpeakingId: question.id,
           part: selectedPart,
           question: question.question,
-          transcript: transcript.trim(),
+          response: transcript,
           duration: timer
         })
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to get feedback');
-      }
+      if (!response.ok) throw new Error('Failed to submit response');
 
       const data = await response.json();
-      setFeedback(data.feedback);
+      setFeedback(data.feedback || data);
       setStep('feedback');
     } catch (err) {
       setError(err.message);
@@ -154,26 +201,13 @@ const SpeakingPractice = () => {
   const fetchModelAnswer = async () => {
     try {
       setLoadingModel(true);
-      setError(null);
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`${API_URL}/api/speaking/model-answer`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          part: selectedPart,
-          question: question.question,
-          userTranscript: transcript.trim()
-        })
+      const response = await fetch(`${API_URL}/api/speaking/model-answer/${question.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to get model answer');
-      }
+      if (!response.ok) throw new Error('Failed to fetch model answer');
 
       const data = await response.json();
       setModelAnswer(data.modelAnswer);
@@ -185,24 +219,21 @@ const SpeakingPractice = () => {
   };
 
   const resetPractice = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (prepTimerRef.current) clearInterval(prepTimerRef.current);
+    if (recognitionRef.current) recognitionRef.current.stop();
+    
     setSelectedPart(null);
     setQuestion(null);
+    setIsRecording(false);
     setTranscript('');
     setTimer(0);
     setFeedback(null);
-    setError(null);
     setModelAnswer(null);
+    setNotes('');
+    setPrepTimer(60);
+    setSpeakTimer(120);
     setStep('select');
-  };
-
-  const tryNewQuestion = () => {
-    setQuestion(null);
-    setTranscript('');
-    setTimer(0);
-    setFeedback(null);
-    setError(null);
-    setModelAnswer(null);
-    fetchQuestion(selectedPart);
   };
 
   const formatTime = (seconds) => {
@@ -245,16 +276,24 @@ const SpeakingPractice = () => {
               {[1, 2, 3].map(part => (
                 <div
                   key={part}
-                  className="part-card"
+                  className={`part-card ${part === 2 ? 'featured' : ''}`}
                   onClick={() => {
                     setSelectedPart(part);
                     fetchQuestion(part);
                   }}
                 >
+                  {part === 2 && <div className="part-badge">Cue Card</div>}
                   <div className="part-number">Part {part}</div>
                   <h3>{partInfo[part].title}</h3>
-                  <p className="part-duration">{partInfo[part].duration}</p>
+                  <p className="part-duration">⏱️ {partInfo[part].duration}</p>
                   <p className="part-description">{partInfo[part].description}</p>
+                  {part === 2 && (
+                    <div className="part-highlight">
+                      <span>📝 1 min prep</span>
+                      <span>🎤 2 min speak</span>
+                    </div>
+                  )}
+                  <button className="start-btn">Start Practice →</button>
                 </div>
               ))}
             </div>
@@ -269,16 +308,86 @@ const SpeakingPractice = () => {
             <div className="question-card">
               <h2>Your Question</h2>
               <p className="question-text">{question.question}</p>
+              
+              {selectedPart === 2 && question.bulletPoints && (
+                <div className="cue-card">
+                  <h3>You should say:</h3>
+                  <ul className="bullet-points">
+                    {question.bulletPoints.map((point, idx) => (
+                      <li key={idx}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
               {selectedPart === 2 && (
-                <p className="prep-note">You have 1 minute to prepare, then speak for 1-2 minutes.</p>
+                <p className="prep-note">
+                  📝 You will have <strong>1 minute</strong> to prepare and make notes, 
+                  then <strong>2 minutes</strong> to speak.
+                </p>
               )}
             </div>
             <div className="action-buttons">
               <button className="btn-secondary" onClick={resetPractice}>
                 Choose Different Part
               </button>
-              <button className="btn-primary" onClick={startRecording}>
-                🎤 Start Recording
+              {selectedPart === 2 ? (
+                <button className="btn-primary" onClick={startPreparation}>
+                  📝 Start Preparation (1 min)
+                </button>
+              ) : (
+                <button className="btn-primary" onClick={startRecording}>
+                  🎤 Start Recording
+                </button>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Preparation Phase (Part 2 only) */}
+        {step === 'preparing' && (
+          <section className="preparation-section">
+            <div className="part-badge">Part {selectedPart} - Preparation</div>
+            
+            <div className="prep-timer-container">
+              <div className={`prep-timer ${prepTimer <= 10 ? 'timer-warning' : ''}`}>
+                <span className="timer-label">Preparation Time</span>
+                <span className="timer-value">{formatTime(prepTimer)}</span>
+              </div>
+            </div>
+
+            <div className="question-card">
+              <h2>Your Topic</h2>
+              <p className="question-text">{question.question}</p>
+              
+              {question.bulletPoints && (
+                <div className="cue-card">
+                  <h3>You should say:</h3>
+                  <ul className="bullet-points">
+                    {question.bulletPoints.map((point, idx) => (
+                      <li key={idx}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="notes-section">
+              <h3>📝 Your Notes</h3>
+              <textarea
+                className="notes-input"
+                placeholder="Write your notes here... (bullet points, key ideas, vocabulary)"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </div>
+
+            <div className="action-buttons">
+              <button className="btn-secondary" onClick={resetPractice}>
+                Cancel
+              </button>
+              <button className="btn-primary" onClick={skipPreparation}>
+                🎤 Start Speaking Now
               </button>
             </div>
           </section>
@@ -291,165 +400,132 @@ const SpeakingPractice = () => {
             <div className="question-reminder">
               <strong>Question:</strong> {question.question}
             </div>
+            
             <div className="recording-indicator">
               <div className="pulse-ring"></div>
               <div className="mic-icon">🎤</div>
             </div>
-            <div className="timer">{formatTime(timer)}</div>
+            
+            <div className={`timer ${selectedPart === 2 && speakTimer <= 30 ? 'timer-warning' : ''}`}>
+              {selectedPart === 2 ? (
+                <>
+                  <span className="timer-label">Time Remaining</span>
+                  <span className="timer-value">{formatTime(speakTimer)}</span>
+                </>
+              ) : (
+                <>
+                  <span className="timer-label">Recording Time</span>
+                  <span className="timer-value">{formatTime(timer)}</span>
+                </>
+              )}
+            </div>
+            
             <p className="recording-status">Recording... Speak clearly</p>
+            
             <div className="live-transcript">
               <h4>Live Transcript:</h4>
               <p>{transcript || 'Start speaking...'}</p>
             </div>
+            
             <button className="btn-stop" onClick={stopRecording}>
-              ⏹️ Stop Recording
+              ⏹ Stop Recording
             </button>
           </section>
         )}
 
-        {/* Review */}
-        {step === 'review' && (
-          <section className="review-section">
-            <h2>Review Your Response</h2>
-            <div className="stats-row">
-              <div className="stat">
-                <span className="stat-label">Duration</span>
-                <span className="stat-value">{formatTime(timer)}</span>
-              </div>
-              <div className="stat">
-                <span className="stat-label">Words</span>
-                <span className="stat-value">{transcript.split(/\s+/).filter(w => w).length}</span>
-              </div>
-            </div>
-            <div className="transcript-review">
-              <h4>Your Transcript:</h4>
-              <p>{transcript || 'No speech detected'}</p>
-            </div>
-            <div className="action-buttons">
-              <button className="btn-secondary" onClick={tryNewQuestion}>
-                🔄 Try Again
-              </button>
-              <button 
-                className="btn-primary" 
-                onClick={submitForFeedback}
-                disabled={loading || !transcript.trim()}
-              >
-                {loading ? 'Analyzing...' : '📊 Get AI Feedback'}
-              </button>
-            </div>
-          </section>
+        {/* Loading */}
+        {loading && (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Processing your response...</p>
+          </div>
         )}
 
         {/* Feedback */}
         {step === 'feedback' && feedback && (
           <section className="feedback-section">
-            <h2>Your Speaking Feedback</h2>
+            <h2>Your Feedback</h2>
             
-            <div className="overall-score">
-              <div className={`score-circle ${getScoreColor(feedback.overallBand)}`}>
-                <span className="score-number">{feedback.overallBand}</span>
-                <span className="score-label">Overall Band</span>
+            <div className="score-display">
+              <div className={`score-circle ${getScoreColor(feedback.overallBand || feedback.band)}`}>
+                <span className="score-value">{feedback.overallBand || feedback.band}</span>
+                <span className="score-label">Band</span>
               </div>
             </div>
 
-            <div className="criteria-scores">
-              <div className="criterion">
-                <span className="criterion-name">Fluency & Coherence</span>
-                <span className={`criterion-score ${getScoreColor(feedback.fluencyCoherence)}`}>
-                  {feedback.fluencyCoherence}
-                </span>
-              </div>
-              <div className="criterion">
-                <span className="criterion-name">Lexical Resource</span>
-                <span className={`criterion-score ${getScoreColor(feedback.lexicalResource)}`}>
-                  {feedback.lexicalResource}
-                </span>
-              </div>
-              <div className="criterion">
-                <span className="criterion-name">Grammatical Range</span>
-                <span className={`criterion-score ${getScoreColor(feedback.grammaticalRange)}`}>
-                  {feedback.grammaticalRange}
-                </span>
-              </div>
-              <div className="criterion">
-                <span className="criterion-name">Pronunciation</span>
-                <span className={`criterion-score ${getScoreColor(feedback.pronunciation)}`}>
-                  {feedback.pronunciation}
-                </span>
-              </div>
-            </div>
-
-            <div className="feedback-details">
-              <div className="feedback-card strengths">
-                <h4>💪 Strengths</h4>
-                <ul>
-                  {feedback.strengths?.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </div>
-              <div className="feedback-card improvements">
-                <h4>📈 Areas to Improve</h4>
-                <ul>
-                  {feedback.improvements?.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </div>
-            </div>
-
-            <div className="summary-card">
-              <h4>📝 Summary</h4>
-              <p>{feedback.summary}</p>
-            </div>
-
-            {/* Model Answer Section */}
-            {!modelAnswer ? (
-              <div className="model-answer-prompt">
-                <button 
-                  className="btn-model-answer"
-                  onClick={fetchModelAnswer}
-                  disabled={loadingModel}
-                >
-                  {loadingModel ? '⏳ Generating...' : '✨ See Model Answer (Band 8+)'}
-                </button>
-                <p className="model-answer-hint">See how a Band 8+ speaker would answer this question</p>
-              </div>
-            ) : (
-              <div className="model-answer-section">
-                <h3>✨ Band 8+ Model Answer</h3>
-                <div className="model-answer-content">
-                  <p>{modelAnswer.modelAnswer}</p>
+            {feedback.scores && (
+              <div className="criteria-scores">
+                <div className="criteria-item">
+                  <span className="criteria-label">Fluency & Coherence</span>
+                  <span className="criteria-score">{feedback.scores.fluencyCoherence}</span>
                 </div>
-                
-                <div className="key-vocabulary">
-                  <h4>🔤 Key Vocabulary to Learn</h4>
-                  <div className="vocab-tags">
-                    {modelAnswer.keyVocabulary?.map((word, i) => (
-                      <span key={i} className="vocab-tag">{word}</span>
-                    ))}
-                  </div>
+                <div className="criteria-item">
+                  <span className="criteria-label">Lexical Resource</span>
+                  <span className="criteria-score">{feedback.scores.lexicalResource}</span>
                 </div>
-
-                <div className="improvement-tips">
-                  <h4>💡 How to Improve</h4>
-                  <p>{modelAnswer.improvements}</p>
+                <div className="criteria-item">
+                  <span className="criteria-label">Grammar</span>
+                  <span className="criteria-score">{feedback.scores.grammaticalRange}</span>
+                </div>
+                <div className="criteria-item">
+                  <span className="criteria-label">Pronunciation</span>
+                  <span className="criteria-score">{feedback.scores.pronunciation}</span>
                 </div>
               </div>
             )}
 
+            <div className="feedback-details">
+              <div className="transcript-section">
+                <h3>Your Response</h3>
+                <p>{transcript}</p>
+                <span className="duration">Duration: {formatTime(timer)}</span>
+              </div>
+
+              {feedback.feedback && (
+                <div className="feedback-text">
+                  <h3>Detailed Feedback</h3>
+                  <p>{feedback.feedback}</p>
+                </div>
+              )}
+
+              {feedback.suggestions && (
+                <div className="suggestions">
+                  <h3>Suggestions for Improvement</h3>
+                  <ul>
+                    {feedback.suggestions.map((suggestion, idx) => (
+                      <li key={idx}>{suggestion}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="model-answer-section">
+              {!modelAnswer ? (
+                <button 
+                  className="btn-model" 
+                  onClick={fetchModelAnswer}
+                  disabled={loadingModel}
+                >
+                  {loadingModel ? 'Loading...' : '📖 View Model Answer'}
+                </button>
+              ) : (
+                <div className="model-answer">
+                  <h3>Model Answer</h3>
+                  <p>{modelAnswer}</p>
+                </div>
+              )}
+            </div>
+
             <div className="action-buttons">
-              <button className="btn-secondary" onClick={tryNewQuestion}>
-                🔄 Try Another Question
+              <button className="btn-secondary" onClick={resetPractice}>
+                Practice Another Question
               </button>
-              <button className="btn-primary" onClick={resetPractice}>
-                📚 Choose Different Part
+              <button className="btn-primary" onClick={() => navigate('/speaking-history')}>
+                View History
               </button>
             </div>
           </section>
-        )}
-
-        {loading && step !== 'review' && (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
-            <p>Loading...</p>
-          </div>
         )}
       </main>
     </div>

@@ -217,9 +217,8 @@ const SpeakingPractice = () => {
 
     if (!response.ok) throw new Error('Failed to fetch model answer');
 
-  const data = await response.json();
-const answer = data.modelAnswer || data.model_answer || data.answer || 'Model answer not available';
-setModelAnswer(typeof answer === 'object' ? JSON.stringify(answer, null, 2) : answer);
+ const data = await response.json();
+setModelAnswer(data);
   } catch (err) {
     setError(err.message);
   } finally {
@@ -510,20 +509,42 @@ setModelAnswer(typeof answer === 'object' ? JSON.stringify(answer, null, 2) : an
             </div>
 
             <div className="model-answer-section">
-              {!modelAnswer ? (
-                <button 
-                  className="btn-model" 
-                  onClick={fetchModelAnswer}
-                  disabled={loadingModel}
-                >
-                  {loadingModel ? 'Loading...' : '📖 View Model Answer'}
-                </button>
-              ) : (
-                <div className="model-answer">
-                  <h3>Model Answer</h3>
-                  <p>{modelAnswer}</p>
-                </div>
-              )}
+ {!modelAnswer ? (
+  <button 
+    className="btn-model" 
+    onClick={fetchModelAnswer}
+    disabled={loadingModel}
+  >
+    {loadingModel ? 'Loading...' : '📖 View Model Answer'}
+  </button>
+) : (
+  <div className="model-answer">
+    <h3>Model Answer</h3>
+    {typeof modelAnswer === 'object' ? (
+      <>
+        <p>{modelAnswer.modelAnswer}</p>
+        {modelAnswer.keyVocabulary && modelAnswer.keyVocabulary.length > 0 && (
+          <div className="key-vocabulary">
+            <h4>Key Vocabulary</h4>
+            <ul>
+              {modelAnswer.keyVocabulary.map((word, idx) => (
+                <li key={idx}>{word}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {modelAnswer.improvements && (
+          <div className="improvements-tip">
+            <h4>Tips for Improvement</h4>
+            <p>{modelAnswer.improvements}</p>
+          </div>
+        )}
+      </>
+    ) : (
+      <p>{modelAnswer}</p>
+    )}
+  </div>
+)}
             </div>
 
             <div className="action-buttons">

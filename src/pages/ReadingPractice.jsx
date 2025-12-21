@@ -338,7 +338,7 @@ const ReadingPractice = () => {
                     onClick={() => selectFullTest(test.id)}
                   >
                     <div className="passage-header">
-                      <span className="question-count">{test.totalQuestions} questions</span>
+                      {/* <span className="question-count">{test.totalQuestions} questions</span> */}
                      </div>   
                     <h3>{test.title}</h3>
                     <div className="test-passages">
@@ -346,7 +346,6 @@ const ReadingPractice = () => {
                         <div key={p.id} className="test-passage-item">
                           <span className="passage-number">Passage {idx + 1}:</span>
                           <span className="passage-title">{p.title}</span>
-                          <span className="passage-questions">({p.questionCount} Q)</span>
                         </div>
                       ))}
                     </div>
@@ -365,7 +364,7 @@ const ReadingPractice = () => {
                     onClick={() => selectPassage(passage.id)}
                   >
                     <div className="passage-header">
-                      <span className="question-count">{passage.questionCount} questions</span>
+                      {/* <span className="question-count">{passage.questionCount} questions</span> */}
                     </div>
                     <h3>{passage.title}</h3>
                     <p className="passage-topic">{passage.topic}</p>

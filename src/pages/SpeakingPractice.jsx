@@ -217,8 +217,16 @@ const SpeakingPractice = () => {
 
     if (!response.ok) throw new Error('Failed to fetch model answer');
 
- const data = await response.json();
-setModelAnswer(data);
+const data = await response.json();
+// Handle both nested and direct modelAnswer formats
+const answer = data.modelAnswer || data;
+if (typeof answer === 'object' && answer.modelAnswer) {
+  setModelAnswer(answer);
+} else if (typeof answer === 'string') {
+  setModelAnswer({ modelAnswer: answer, keyVocabulary: [], improvements: '' });
+} else {
+  setModelAnswer({ modelAnswer: 'Model answer not available', keyVocabulary: [], improvements: '' });
+}
   } catch (err) {
     setError(err.message);
   } finally {
@@ -522,7 +530,7 @@ setModelAnswer(data);
     <h3>Model Answer</h3>
     {typeof modelAnswer === 'object' ? (
       <>
-        <p>{modelAnswer.modelAnswer}</p>
+        <p>{typeof modelAnswer.modelAnswer === 'string' ? modelAnswer.modelAnswer : 'Model answer not available'}</p>
         {modelAnswer.keyVocabulary && modelAnswer.keyVocabulary.length > 0 && (
           <div className="key-vocabulary">
             <h4>Key Vocabulary</h4>

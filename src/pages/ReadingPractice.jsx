@@ -331,7 +331,7 @@ const ReadingPractice = () => {
           ) : mode === 'fulltest' ? (
             <section className="passage-selection">
               <div className="passages-grid">
-                {fullTests.map(test => (
+              {fullTests.slice(0, 4).map(test => (
                   <div
                     key={test.id}
                     className="passage-card fulltest-card"
@@ -339,7 +339,7 @@ const ReadingPractice = () => {
                   >
                     <div className="passage-header">
                       {/* <span className="question-count">{test.totalQuestions} questions</span> */}
-                     </div>   
+                    </div>
                     <h3>{test.title}</h3>
                     <div className="test-passages">
                       {test.passages.map((p, idx) => (
@@ -352,12 +352,26 @@ const ReadingPractice = () => {
                     <button className="start-btn">Start Test →</button>
                   </div>
                 ))}
+                {fullTests.length > 4 && (
+                  <div className="passage-card fulltest-card more-tests-card">
+                    <div className="passage-header">
+                      <span className="more-badge">✨ More Content</span>
+                    </div>
+                    <h3>More Tests Available</h3>
+                    <div className="more-tests-content">
+                      <p>Continue practicing to discover more full-length IELTS Reading tests!</p>
+                    </div>
+                    <button className="start-btn" onClick={() => selectFullTest(fullTests[4].id)}>
+                      Try Next Test →
+                    </button>
+                  </div>
+                )}
               </div>
             </section>
           ) : (
             <section className="passage-selection">
               <div className="passages-grid">
-                {passages.map(passage => (
+        {passages.slice(0, 6).map(passage => (
                   <div
                     key={passage.id}
                     className="passage-card"
@@ -371,6 +385,20 @@ const ReadingPractice = () => {
                     <button className="start-btn">Start Practice →</button>
                   </div>
                 ))}
+                {passages.length > 6 && (
+                  <div className="passage-card more-passages-card">
+                    <div className="passage-header">
+                      <span className="more-badge">✨ More Content</span>
+                    </div>
+                    <h3>More Passages Available</h3>
+                    <div className="more-tests-content">
+                      <p>Keep practicing to unlock more reading passages on various topics!</p>
+                    </div>
+                    <button className="start-btn" onClick={() => selectPassage(passages[6].id)}>
+                      Try Next Passage →
+                    </button>
+                  </div>
+                )}
               </div>
             </section>
           )}

@@ -287,7 +287,7 @@ const ListeningPractice = () => {
                 </p>
                 <ul className="mode-features">
                   <li>Single section</li>
-                  <li>10 questions</li>
+                 {/* <li>10 questions</li> */}
                   <li>Immediate feedback</li>
                   <li>Choose your topic</li>
                 </ul>
@@ -300,11 +300,11 @@ const ListeningPractice = () => {
                 <h3>Full Test Mode</h3>
                 <p className="mode-time">⏱️ 30 minutes</p>
                 <p className="mode-description">
-                  Complete IELTS Listening test with 4 sections and 40 questions.
+                 Complete IELTS Listening test in real exam conditions.
                 </p>
                 <ul className="mode-features">
-                  <li>4 sections</li>
-                  <li>40 questions total</li>
+                 {/* <li>4 sections</li> */}
+                 {/* <li>40 questions total</li> */}
                   <li>Real exam timing</li>
                   <li>Band score calculation</li>
                 </ul>
@@ -351,14 +351,14 @@ const ListeningPractice = () => {
           ) : mode === 'fulltest' ? (
             <section className="section-selection">
               <div className="sections-grid">
-                {fullTests.map(test => (
+               {fullTests.slice(0, 4).map(test => (
                   <div
                     key={test.id}
                     className="section-card fulltest-card"
                     onClick={() => selectFullTest(test.id)}
                   >
                     <div className="section-header">
-                      <span className="question-count">{test.totalQuestions} questions</span>
+                    {/* <span className="question-count">{test.totalQuestions} questions</span> */}
                     </div>
                     <h3>{test.title}</h3>
                     <div className="test-sections">
@@ -366,33 +366,61 @@ const ListeningPractice = () => {
                         <div key={s.id} className="test-section-item">
                           <span className="section-number">Part {idx + 1}:</span>
                           <span className="section-title">{s.title}</span>
-                          <span className="section-questions">({s.questionCount} Q)</span>
+                         {/* <span className="section-questions">({s.questionCount} Q)</span> */}
                         </div>
                       ))}
                     </div>
                     <button className="start-btn">Start Test →</button>
                   </div>
                 ))}
+                {fullTests.length > 4 && (
+                  <div className="section-card fulltest-card more-tests-card">
+                    <div className="section-header">
+                      <span className="more-badge">✨ More Content</span>
+                    </div>
+                    <h3>More Tests Available</h3>
+                    <div className="more-tests-content">
+                      <p>Continue practicing to discover more full-length IELTS Listening tests!</p>
+                    </div>
+                    <button className="start-btn" onClick={() => selectFullTest(fullTests[4].id)}>
+                      Try Next Test →
+                    </button>
+                  </div>
+                )}
               </div>
             </section>
           ) : (
             <section className="section-selection">
               <div className="sections-grid">
-                {sections.map(section => (
-                  <div
-                    key={section.id}
-                    className="section-card"
-                    onClick={() => selectSection(section.id)}
-                  >
+              {sections.slice(0, 6).map(section => (
+                <div
+                  key={section.id}
+                  className="section-card"
+                  onClick={() => selectSection(section.id)}
+                >
                     <div className="section-header">
                       <span className="part-badge">Part {section.part}</span>
-                      <span className="question-count">{section.questionCount} questions</span>
+                      {/* <span className="question-count">{section.questionCount} questions</span> */}
                     </div>
                     <h3>{section.title}</h3>
                     <p className="section-description">{section.description}</p>
                     <button className="start-btn">Start Practice →</button>
                   </div>
                 ))}
+                {sections.length > 6 && (
+                <div className="section-card more-sections-card">
+                  <div className="section-header">
+                    <span className="more-badge">✨ More Content</span>
+                  </div>
+                  <h3>More Sections Available</h3>
+                  <div className="more-tests-content">
+                    <p>Keep practicing to unlock more listening sections!</p>
+                  </div>
+                  <button className="start-btn" onClick={() => selectSection(sections[6].id)}>
+                    Try Next Section →
+                  </button>
+                </div>
+              )}
               </div>
             </section>
           )}

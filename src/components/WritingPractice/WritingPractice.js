@@ -5,15 +5,43 @@ import './WritingPractice.css';
 
 // Task 2 questions (essay questions)
 const task2Questions = [
+  // Opinion Essays (Agree/Disagree)
   "Some people think that governments should invest more in public services instead of spending money on arts and culture. To what extent do you agree or disagree?",
+  "Some people believe that technology has made our lives too complex, and the solution is to live a simpler life without technology. To what extent do you agree or disagree?",
+  "Some people think that the best way to reduce crime is to give longer prison sentences. Others believe there are better ways to reduce crime. Discuss both views and give your opinion.",
+  "In many countries, the gap between the rich and the poor is increasing. What problems does this cause? What solutions can you suggest?",
+  "Some people believe that children should be taught to be competitive. Others think they should learn to cooperate. Discuss both views and give your opinion.",
+  "Many people believe that social networking sites have had a huge negative impact on both individuals and society. To what extent do you agree or disagree?",
+  "Some people think that it is better to educate boys and girls in separate schools. Others believe that both sexes should be educated together. Discuss both views and give your opinion.",
+  "The increasing use of technology in education is changing the role of teachers. To what extent do you agree or disagree?",
+  
+  // Discussion Essays
   "These days more fathers stay at home and take care of their children while mothers go out to work. What are the reasons for this? Is this a positive or negative development?",
   "In many countries, the amount of crime is increasing. What do you think are the main causes of crime? What solutions can you suggest?",
-  "Some people believe that technology has made our lives too complex, and the solution is to live a simpler life without technology. To what extent do you agree or disagree?",
-  "Many people today prefer to read news online rather than in newspapers. What are the advantages and disadvantages of this trend?"
+  "Many people today prefer to read news online rather than in newspapers. What are the advantages and disadvantages of this trend?",
+  "Some people think that governments should spend money on railways rather than roads. To what extent do you agree or disagree?",
+  "In some countries, young people are encouraged to work or travel for a year between finishing high school and starting university. Discuss the advantages and disadvantages of this.",
+  "Some people believe that unpaid community service should be a compulsory part of high school programs. To what extent do you agree or disagree?",
+  "More and more people are relying on private cars as their main form of transportation. Describe some of the problems caused by this and suggest some solutions.",
+  
+  // Problem/Solution Essays
+  "Global warming is one of the biggest threats humans face in the 21st century. What are the causes of global warming and what solutions are there?",
+  "In many cities, traffic congestion is a major problem. What are the causes? What measures could be taken to reduce traffic in big cities?",
+  "Obesity is an increasing problem in many countries, especially among young people. What are the causes and effects of this problem? What solutions can be implemented?",
+  "Many languages are dying out every year. What are the causes of this? What effects will it have on society?",
+  "Plastic pollution is becoming an increasingly serious environmental problem. What are the causes? What solutions would you suggest?",
+  
+  // Advantages/Disadvantages Essays
+  "Many museums and historical sites are mainly visited by tourists, not local people. Why is this? What can be done to attract local people?",
+  "In some countries, an increasing number of people are suffering from health problems as a result of eating too much fast food. What are the causes? What can be done about this?",
+  "Some people prefer to spend their lives doing the same things and avoiding change. Others think that change is always a good thing. Discuss both views and give your opinion.",
+  "Many governments think that economic progress is their most important goal. Some people, however, think that other types of progress are equally important. Discuss both views and give your opinion.",
+  "Some people think that parents should teach children how to be good members of society. Others believe that school is the place to learn this. Discuss both views and give your opinion."
 ];
 
 // Task 1 questions (graphs, charts, maps, processes)
 const task1Questions = [
+  // LINE GRAPHS (4)
   {
     id: 1,
     type: 'line-graph',
@@ -32,6 +60,54 @@ const task1Questions = [
   },
   {
     id: 2,
+    type: 'line-graph',
+    title: 'Global CO2 Emissions',
+    description: 'The graph shows carbon dioxide emissions (in billion tonnes) from four major countries between 1990 and 2020.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      labels: ['1990', '1995', '2000', '2005', '2010', '2015', '2020'],
+      datasets: [
+        { label: 'China', data: [2.4, 3.0, 3.4, 5.5, 8.5, 9.5, 10.2], color: '#E53935' },
+        { label: 'USA', data: [5.0, 5.3, 5.8, 5.9, 5.5, 5.2, 4.8], color: '#1E88E5' },
+        { label: 'India', data: [0.6, 0.8, 1.0, 1.2, 1.7, 2.2, 2.6], color: '#43A047' },
+        { label: 'Russia', data: [2.4, 1.8, 1.5, 1.6, 1.6, 1.5, 1.5], color: '#FB8C00' }
+      ]
+    }
+  },
+  {
+    id: 3,
+    type: 'line-graph',
+    title: 'University Enrollment Rates',
+    description: 'The line graph shows the percentage of 18-24 year olds enrolled in university education in three countries from 1980 to 2020.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      labels: ['1980', '1990', '2000', '2010', '2020'],
+      datasets: [
+        { label: 'South Korea', data: [15, 35, 68, 95, 98], color: '#3F51B5' },
+        { label: 'UK', data: [20, 25, 35, 48, 55], color: '#009688' },
+        { label: 'Brazil', data: [10, 12, 18, 28, 42], color: '#FF5722' }
+      ]
+    }
+  },
+  {
+    id: 4,
+    type: 'line-graph',
+    title: 'Smartphone Sales',
+    description: 'The line graph shows the number of smartphones sold (in millions) by three major companies between 2010 and 2022.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      labels: ['2010', '2012', '2014', '2016', '2018', '2020', '2022'],
+      datasets: [
+        { label: 'Samsung', data: [20, 95, 180, 220, 280, 250, 270], color: '#1565C0' },
+        { label: 'Apple', data: [40, 125, 170, 210, 205, 200, 230], color: '#616161' },
+        { label: 'Huawei', data: [5, 25, 70, 140, 200, 180, 120], color: '#C62828' }
+      ]
+    }
+  },
+
+  // BAR CHARTS (4)
+  {
+    id: 5,
     type: 'bar-chart',
     title: 'Water Consumption by Sector',
     description: 'The bar chart below shows water consumption (%) in different sectors in five countries.',
@@ -46,7 +122,51 @@ const task1Questions = [
     }
   },
   {
-    id: 3,
+    id: 6,
+    type: 'bar-chart',
+    title: 'Average Working Hours',
+    description: 'The bar chart shows the average number of working hours per week in six different countries.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      labels: ['Mexico', 'South Korea', 'USA', 'Japan', 'UK', 'Germany'],
+      datasets: [
+        { label: 'Working Hours', data: [48, 44, 42, 40, 38, 35], color: '#673AB7' }
+      ]
+    }
+  },
+  {
+    id: 7,
+    type: 'bar-chart',
+    title: 'Tourism Revenue',
+    description: 'The bar chart shows tourism revenue (in billion USD) for five countries in 2010 and 2020.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      labels: ['France', 'Spain', 'USA', 'Thailand', 'Australia'],
+      datasets: [
+        { label: '2010', data: [46, 52, 103, 20, 29], color: '#00BCD4' },
+        { label: '2020', data: [42, 35, 75, 15, 22], color: '#E91E63' }
+      ]
+    }
+  },
+  {
+    id: 8,
+    type: 'bar-chart',
+    title: 'Renewable Energy Sources',
+    description: 'The bar chart shows the percentage of electricity generated from renewable sources in four countries.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      labels: ['Norway', 'Brazil', 'Germany', 'USA'],
+      datasets: [
+        { label: 'Hydropower', data: [95, 65, 4, 7], color: '#03A9F4' },
+        { label: 'Wind', data: [2, 8, 25, 10], color: '#8BC34A' },
+        { label: 'Solar', data: [0, 2, 10, 4], color: '#FFC107' }
+      ]
+    }
+  },
+
+  // PIE CHARTS (4)
+  {
+    id: 9,
     type: 'pie-chart',
     title: 'Household Energy Use',
     description: 'The pie chart below shows the breakdown of energy consumption in an average UK household.',
@@ -62,7 +182,61 @@ const task1Questions = [
     }
   },
   {
-    id: 4,
+    id: 10,
+    type: 'pie-chart',
+    title: 'Global Smartphone Market Share',
+    description: 'The pie chart shows the market share of smartphone manufacturers worldwide in 2023.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      segments: [
+        { label: 'Samsung', value: 22, color: '#1565C0' },
+        { label: 'Apple', value: 18, color: '#616161' },
+        { label: 'Xiaomi', value: 14, color: '#FF6F00' },
+        { label: 'OPPO', value: 10, color: '#00897B' },
+        { label: 'Vivo', value: 8, color: '#5E35B1' },
+        { label: 'Others', value: 28, color: '#78909C' }
+      ]
+    }
+  },
+  {
+    id: 11,
+    type: 'pie-chart',
+    title: 'Causes of Deforestation',
+    description: 'The pie chart shows the main causes of deforestation worldwide.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      segments: [
+        { label: 'Agriculture', value: 40, color: '#8BC34A' },
+        { label: 'Logging', value: 25, color: '#795548' },
+        { label: 'Infrastructure', value: 15, color: '#607D8B' },
+        { label: 'Mining', value: 10, color: '#FF5722' },
+        { label: 'Urbanization', value: 7, color: '#9C27B0' },
+        { label: 'Other', value: 3, color: '#BDBDBD' }
+      ]
+    }
+  },
+  {
+    id: 12,
+    type: 'pie-chart',
+    title: 'Household Budget',
+    description: 'The pie chart shows how an average family in the US spends their monthly income.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      segments: [
+        { label: 'Housing', value: 33, color: '#E53935' },
+        { label: 'Transportation', value: 17, color: '#1E88E5' },
+        { label: 'Food', value: 13, color: '#43A047' },
+        { label: 'Insurance', value: 11, color: '#FB8C00' },
+        { label: 'Healthcare', value: 8, color: '#8E24AA' },
+        { label: 'Entertainment', value: 5, color: '#00ACC1' },
+        { label: 'Other', value: 13, color: '#757575' }
+      ]
+    }
+  },
+
+  // PROCESS DIAGRAMS (4)
+  {
+    id: 13,
     type: 'process',
     title: 'Chocolate Production Process',
     description: 'The diagram below shows the stages in the production of chocolate.',
@@ -81,7 +255,68 @@ const task1Questions = [
     }
   },
   {
-    id: 5,
+    id: 14,
+    type: 'process',
+    title: 'Water Treatment Process',
+    description: 'The diagram below shows how drinking water is treated before distribution to homes.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      steps: [
+        'Raw water collected from reservoir',
+        'Large debris removed by screens',
+        'Chemicals added for coagulation',
+        'Water settles in sedimentation tank',
+        'Water filtered through sand and gravel',
+        'Chlorine added for disinfection',
+        'pH adjusted if necessary',
+        'Clean water stored in tanks',
+        'Water distributed to homes'
+      ]
+    }
+  },
+  {
+    id: 15,
+    type: 'process',
+    title: 'Paper Recycling Process',
+    description: 'The diagram below illustrates the process of recycling paper.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      steps: [
+        'Used paper collected from recycling bins',
+        'Paper sorted by type and grade',
+        'Paper shredded into small pieces',
+        'Mixed with water to create pulp',
+        'Ink removed through de-inking process',
+        'Pulp cleaned and refined',
+        'New paper sheets formed',
+        'Paper dried and rolled'
+      ]
+    }
+  },
+  {
+    id: 16,
+    type: 'process',
+    title: 'Brick Manufacturing',
+    description: 'The diagram below shows how bricks are manufactured for construction.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      steps: [
+        'Clay extracted from quarry',
+        'Clay crushed and ground',
+        'Water added to form mixture',
+        'Clay shaped into brick molds',
+        'Bricks dried for 24-48 hours',
+        'Bricks loaded into kiln',
+        'Fired at 1000°C for several days',
+        'Bricks cooled gradually',
+        'Quality inspection and packaging'
+      ]
+    }
+  },
+
+  // MAPS (4)
+  {
+    id: 17,
     type: 'map',
     title: 'Riverside Town Development',
     description: 'The two maps below show the changes in a small town called Riverside between 1990 and 2020.',
@@ -98,21 +333,54 @@ const task1Questions = [
     }
   },
   {
-    id: 6,
-    type: 'table',
-    title: 'University Graduate Employment',
-    description: 'The table below shows the employment rates of graduates from different degree subjects six months after graduation.',
+    id: 18,
+    type: 'map',
+    title: 'University Campus Changes',
+    description: 'The maps show the changes to a university campus between 2000 and 2023.',
     question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
     imageData: {
-      headers: ['Subject', '2015', '2018', '2021'],
-      rows: [
-        ['Medicine', '99%', '99%', '98%'],
-        ['Engineering', '85%', '88%', '92%'],
-        ['Computer Science', '80%', '87%', '95%'],
-        ['Business', '75%', '78%', '82%'],
-        ['Arts', '55%', '52%', '48%'],
-        ['Humanities', '50%', '48%', '45%']
-      ]
+      before: {
+        year: '2000',
+        features: ['Main library in center', 'Three academic buildings', 'Large car park in north', 'Sports field in south', 'Single cafeteria', 'Small student accommodation block']
+      },
+      after: {
+        year: '2023',
+        features: ['New science complex added', 'Car park converted to green space', 'Underground parking built', 'Indoor sports center replaced field', 'Three new residence halls', 'Second library building added']
+      }
+    }
+  },
+  {
+    id: 19,
+    type: 'map',
+    title: 'Coastal Resort Development',
+    description: 'The maps show how a coastal area was developed for tourism between 1980 and 2020.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      before: {
+        year: '1980',
+        features: ['Undeveloped beach', 'Fishing village with 50 houses', 'Dirt road to main highway', 'Mangrove forest along coast', 'Small pier for fishing boats', 'Coconut plantation inland']
+      },
+      after: {
+        year: '2020',
+        features: ['Five luxury hotels along beach', 'Marina with 200 boat spaces', 'Paved highway with airport access', 'Golf course replaced plantation', 'Water treatment plant built', 'Mangrove reduced to small area']
+      }
+    }
+  },
+  {
+    id: 20,
+    type: 'map',
+    title: 'Industrial Area Transformation',
+    description: 'The maps show the transformation of an old industrial area into a mixed-use development.',
+    question: 'Summarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    imageData: {
+      before: {
+        year: '1995',
+        features: ['Large factory complex', 'Railway freight yard', 'Warehouse district', 'Worker housing blocks', 'Polluted canal', 'No green spaces']
+      },
+      after: {
+        year: '2023',
+        features: ['Tech company offices', 'Apartment buildings', 'Shopping and entertainment district', 'Canal cleaned and used for boats', 'Central park with walking paths', 'New metro station']
+      }
     }
   }
 ];

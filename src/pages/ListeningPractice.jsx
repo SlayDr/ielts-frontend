@@ -399,7 +399,7 @@ const ListeningPractice = () => {
                   onClick={() => selectSection(section.id)}
                 >
                     <div className="section-header">
-                      <span className="part-badge">Part {section.part}</span>
+                      {/* <span className="part-badge">Part {section.part}</span> */}
                       {/* <span className="question-count">{section.questionCount} questions</span> */}
                     </div>
                     <h3>{section.title}</h3>

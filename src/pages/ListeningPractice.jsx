@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useListeningProgress } from '../hooks/useProgress';
 import './ListeningPractice.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://ielts-backend-0u1s.onrender.com';
 
 const ListeningPractice = () => {
   const navigate = useNavigate();
+  const { isSectionCompleted, isTestCompleted, markSectionComplete, markTestComplete } = useListeningProgress();
   const [mode, setMode] = useState(null); // null, 'practice', 'fulltest'
   const [sections, setSections] = useState([]);
   const [fullTests, setFullTests] = useState([]);
@@ -189,6 +191,8 @@ const ListeningPractice = () => {
         if (!response.ok) throw new Error('Failed to submit test');
         const data = await response.json();
         setResults(data.results);
+        // Mark test as complete
+        markTestComplete(selectedTest.id);
       } else if (selectedSection) {
         const response = await fetch(`${API_URL}/api/listening/submit`, {
           method: 'POST',
@@ -205,6 +209,8 @@ const ListeningPractice = () => {
         if (!response.ok) throw new Error('Failed to submit answers');
         const data = await response.json();
         setResults(data);
+        // Mark section as complete
+        markSectionComplete(selectedSection.id);
       }
       setStep('results');
     } catch (err) {
@@ -354,10 +360,11 @@ const ListeningPractice = () => {
                {fullTests.slice(0, 4).map(test => (
                   <div
                     key={test.id}
-                    className="section-card fulltest-card"
+                    className={`section-card fulltest-card ${isTestCompleted(test.id) ? 'completed' : ''}`}
                     onClick={() => selectFullTest(test.id)}
                   >
                     <div className="section-header">
+                      {isTestCompleted(test.id) && <span className="completed-badge">✓ Completed</span>}
                     {/* <span className="question-count">{test.totalQuestions} questions</span> */}
                     </div>
                     <h3>{test.title}</h3>
@@ -395,10 +402,11 @@ const ListeningPractice = () => {
               {sections.slice(0, 6).map(section => (
                 <div
                   key={section.id}
-                  className="section-card"
+                  className={`section-card ${isSectionCompleted(section.id) ? 'completed' : ''}`}
                   onClick={() => selectSection(section.id)}
                 >
                     <div className="section-header">
+                      {isSectionCompleted(section.id) && <span className="completed-badge">✓ Completed</span>}
                       {/* <span className="part-badge">Part {section.part}</span> */}
                       {/* <span className="question-count">{section.questionCount} questions</span> */}
                     </div>

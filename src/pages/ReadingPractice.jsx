@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useReadingProgress } from '../hooks/useProgress';
 import './ReadingPractice.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://ielts-backend-0u1s.onrender.com';
 
 const ReadingPractice = () => {
   const navigate = useNavigate();
+  const { isPassageCompleted, isTestCompleted, markPassageComplete, markTestComplete } = useReadingProgress();
   const [mode, setMode] = useState(null); // null, 'practice', 'fulltest'
   const [passages, setPassages] = useState([]);
   const [fullTests, setFullTests] = useState([]);
@@ -162,6 +164,8 @@ const ReadingPractice = () => {
         if (!response.ok) throw new Error('Failed to submit test');
         const data = await response.json();
         setResults(data.results);
+        // Mark test as complete
+        markTestComplete(selectedTest.id);
       } else if (selectedPassage) {
         const response = await fetch(`${API_URL}/api/reading/submit`, {
           method: 'POST',
@@ -178,6 +182,8 @@ const ReadingPractice = () => {
         if (!response.ok) throw new Error('Failed to submit answers');
         const data = await response.json();
         setResults(data);
+        // Mark passage as complete
+        markPassageComplete(selectedPassage.id);
       }
       setStep('results');
     } catch (err) {
@@ -334,10 +340,11 @@ const ReadingPractice = () => {
               {fullTests.slice(0, 4).map(test => (
                   <div
                     key={test.id}
-                    className="passage-card fulltest-card"
+                    className={`passage-card fulltest-card ${isTestCompleted(test.id) ? 'completed' : ''}`}
                     onClick={() => selectFullTest(test.id)}
                   >
                     <div className="passage-header">
+                      {isTestCompleted(test.id) && <span className="completed-badge">✓ Completed</span>}
                       {/* <span className="question-count">{test.totalQuestions} questions</span> */}
                     </div>
                     <h3>{test.title}</h3>
@@ -374,10 +381,11 @@ const ReadingPractice = () => {
         {passages.slice(0, 6).map(passage => (
                   <div
                     key={passage.id}
-                    className="passage-card"
+                    className={`passage-card ${isPassageCompleted(passage.id) ? 'completed' : ''}`}
                     onClick={() => selectPassage(passage.id)}
                   >
                     <div className="passage-header">
+                      {isPassageCompleted(passage.id) && <span className="completed-badge">✓ Completed</span>}
                       {/* <span className="question-count">{passage.questionCount} questions</span> */}
                     </div>
                     <h3>{passage.title}</h3>

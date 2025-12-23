@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSpeakingProgress } from '../hooks/useProgress';
 import './SpeakingPractice.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://ielts-backend-0u1s.onrender.com';
 
 const SpeakingPractice = () => {
   const navigate = useNavigate();
+  const { markQuestionComplete } = useSpeakingProgress();
   const [selectedPart, setSelectedPart] = useState(null);
   const [question, setQuestion] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -189,6 +191,10 @@ const SpeakingPractice = () => {
 
       const data = await response.json();
       setFeedback(data.feedback || data);
+      // Mark question as complete
+      if (question.id) {
+        markQuestionComplete(question.id, selectedPart);
+      }
       setStep('feedback');
     } catch (err) {
       setError(err.message);

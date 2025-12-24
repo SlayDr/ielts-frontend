@@ -867,7 +867,7 @@ useEffect(() => {
             <h3 className="question-title">{task1Question.title}</h3>
             <p className="question-description">{task1Question.description}</p>
             {renderTask1Visual()}
-            <p className="question-prompt">{task1Question.question}</p>
+           <p className="question-prompt">{task1Question.task || task1Question.question}</p>
           </>
         ) : (
           <p className="question-text">{task2Question}</p>

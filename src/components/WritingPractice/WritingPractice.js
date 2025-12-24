@@ -733,7 +733,7 @@ useEffect(() => {
               </ul>
               <button className="start-task-btn">Start Task 1</button>
             </div>  
-            </div>
+
             
             <div className="task-card" onClick={() => startTask('task2')}>
               <div className="task-icon">📝</div>

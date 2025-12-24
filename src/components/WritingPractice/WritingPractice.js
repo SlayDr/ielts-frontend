@@ -425,8 +425,10 @@ const [task1Question, setTask1Question] = useState(null);
         });
       }, 1000);
       return () => clearInterval(timer);
-    }
-    useEffect(() => {
+   }
+  }, [selectedTask, timerActive, timeRemaining]);
+
+  useEffect(() => {
   const fetchExamTypeAndQuestions = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -462,7 +464,6 @@ useEffect(() => {
   }
 }, [task1QuestionsFromAPI]);
 
-  }, [selectedTask, timerActive, timeRemaining]);
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -541,12 +542,12 @@ useEffect(() => {
   };
 
   const getNewQuestion = () => {
-    if (selectedTask === 'task1') {
+   if (selectedTask === 'task1') {
       let newQuestion;
+      const questions = task1QuestionsFromAPI.length > 0 ? task1QuestionsFromAPI : task1Questions;
       do {
-       const questions = task1QuestionsFromAPI.length > 0 ? task1QuestionsFromAPI : task1Questions;
-newQuestion = questions[Math.floor(Math.random() * questions.length)];
-} while (newQuestion.id === task1Question.id && questions.length > 1);
+        newQuestion = questions[Math.floor(Math.random() * questions.length)];
+      } while (newQuestion.id === task1Question.id && questions.length > 1);
       setTask1Question(newQuestion);
     } else {
       let newQuestion;

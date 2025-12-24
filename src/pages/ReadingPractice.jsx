@@ -21,7 +21,7 @@ const ReadingPractice = () => {
   const [step, setStep] = useState('select'); // select, reading, results
   const [timer, setTimer] = useState(60 * 60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-
+const [examType, setExamType] = useState('academic');
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -31,7 +31,23 @@ const ReadingPractice = () => {
       fetchFullTests();
     }
   }, [mode]);
-
+useEffect(() => {
+  const fetchExamType = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/user/settings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setExamType(data.examType || 'academic');
+      }
+    } catch (err) {
+      console.error('Failed to fetch exam type:', err);
+    }
+  };
+  fetchExamType();
+}, []);
   useEffect(() => {
     if (isTimerRunning && timer > 0) {
       timerRef.current = setInterval(() => {
@@ -254,7 +270,7 @@ const ReadingPractice = () => {
               ← Dashboard
             </button>
             <h1>📖 Reading Practice</h1>
-            <p className="subtitle">Practice IELTS Academic Reading</p>
+            <p className="subtitle">{examType === 'general' ? 'Practice IELTS General Training Reading' : 'Practice IELTS Academic Reading'}</p>
           </div>
         </header>
 

@@ -27,6 +27,7 @@ const ProfileSettings = () => {
 
   // Settings state
   const [settings, setSettings] = useState({
+    examType: 'academic',
     dailyGoal: 3,
     focusAreas: ['writing', 'speaking', 'reading', 'listening'],
     reminderEnabled: false,
@@ -61,7 +62,13 @@ const ProfileSettings = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setSettings(data);
+        setSettings({
+          examType: data.examType || 'academic',
+          dailyGoal: data.dailyGoal || 3,
+          focusAreas: data.focusAreas || ['writing', 'speaking', 'reading', 'listening'],
+          reminderEnabled: data.reminderEnabled || false,
+          targetBand: data.targetBand || 7
+        });
       }
     } catch (err) {
       console.error('Failed to fetch settings:', err);
@@ -285,6 +292,30 @@ const ProfileSettings = () => {
           {activeTab === 'study' && (
             <form onSubmit={handleSettingsUpdate} className="settings-form">
               <div className="form-group">
+                <label>IELTS Exam Type</label>
+                <div className="exam-type-selector">
+                  <button
+                    type="button"
+                    className={`exam-type-option ${settings.examType === 'academic' ? 'selected' : ''}`}
+                    onClick={() => setSettings({ ...settings, examType: 'academic' })}
+                  >
+                    <span className="exam-icon">🎓</span>
+                    <span className="exam-label">Academic</span>
+                    <span className="exam-desc">University & Professional</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`exam-type-option ${settings.examType === 'general' ? 'selected' : ''}`}
+                    onClick={() => setSettings({ ...settings, examType: 'general' })}
+                  >
+                    <span className="exam-icon">🌍</span>
+                    <span className="exam-label">General Training</span>
+                    <span className="exam-desc">Work & Migration</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-group">
                 <label>Target Band Score</label>
                 <div className="band-selector">
                   {[5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9].map((band) => (
@@ -320,7 +351,7 @@ const ProfileSettings = () => {
                 <label>Focus Areas</label>
                 <div className="focus-areas">
                   {[
-                    { id: 'writing', icon: '✍️', label: 'Writing' },
+                    { id: 'writing', icon: '✏️', label: 'Writing' },
                     { id: 'speaking', icon: '🎤', label: 'Speaking' },
                     { id: 'reading', icon: '📖', label: 'Reading' },
                     { id: 'listening', icon: '🎧', label: 'Listening' }

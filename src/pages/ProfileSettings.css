@@ -330,4 +330,67 @@
   .goal-selector {
     justify-content: center;
   }
+}/* ============================================
+   EXAM TYPE SELECTOR STYLES
+   Add these to ProfileSettings.css
+   ============================================ */
+
+.exam-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.exam-type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.exam-type-option:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.exam-type-option.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.exam-type-option .exam-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.exam-type-option .exam-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.exam-type-option .exam-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.exam-type-option.selected .exam-label {
+  color: #667eea;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .exam-type-selector {
+    grid-template-columns: 1fr;
+  }
 }

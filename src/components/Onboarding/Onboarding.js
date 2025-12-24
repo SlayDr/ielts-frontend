@@ -7,11 +7,17 @@ function Onboarding() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
+    examType: '',
     targetBand: '',
     currentLevel: '',
     schedule: '',
     duration: ''
   });
+
+  const examTypeOptions = [
+    { value: 'academic', label: 'Academic', desc: 'For university admission, professional registration, or higher education' },
+    { value: 'general', label: 'General Training', desc: 'For work experience, migration to English-speaking countries, or secondary education' }
+  ];
 
   const bandOptions = [
     { value: '6.0', label: 'Band 6.0', desc: 'Competent user - Generally good understanding' },
@@ -45,7 +51,7 @@ function Onboarding() {
   };
 
   const handleNext = () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep(step + 1);
     }
   };
@@ -82,12 +88,29 @@ function Onboarding() {
     ));
   };
 
+  const renderExamTypeOptions = () => {
+    return examTypeOptions.map((option) => (
+      <div
+        key={option.value}
+        className={`option-card exam-type-card ${formData.examType === option.value ? 'selected' : ''}`}
+        onClick={() => handleSelect('examType', option.value)}
+      >
+        <div className="exam-type-icon">
+          {option.value === 'academic' ? '🎓' : '🌍'}
+        </div>
+        <h3>{option.label}</h3>
+        <p>{option.desc}</p>
+      </div>
+    ));
+  };
+
   const canProceed = () => {
     switch (step) {
-      case 1: return formData.targetBand !== '';
-      case 2: return formData.currentLevel !== '';
-      case 3: return formData.schedule !== '';
-      case 4: return formData.duration !== '';
+      case 1: return formData.examType !== '';
+      case 2: return formData.targetBand !== '';
+      case 3: return formData.currentLevel !== '';
+      case 4: return formData.schedule !== '';
+      case 5: return formData.duration !== '';
       default: return false;
     }
   };
@@ -96,30 +119,33 @@ function Onboarding() {
     <div className="onboarding-container">
       <div className="header">
         <h1>
-          {step === 1 && 'Target Band Score'}
-          {step === 2 && 'Current Level'}
-          {step === 3 && 'Study Schedule'}
-          {step === 4 && 'Session Duration'}
+          {step === 1 && 'Choose Your IELTS Type'}
+          {step === 2 && 'Target Band Score'}
+          {step === 3 && 'Current Level'}
+          {step === 4 && 'Study Schedule'}
+          {step === 5 && 'Session Duration'}
         </h1>
         <p>
-          {step === 1 && 'What score are you aiming for?'}
-          {step === 2 && 'Where are you starting from?'}
-          {step === 3 && 'How often will you practice?'}
-          {step === 4 && 'How long are your study sessions?'}
+          {step === 1 && 'Which IELTS exam are you preparing for?'}
+          {step === 2 && 'What score are you aiming for?'}
+          {step === 3 && 'Where are you starting from?'}
+          {step === 4 && 'How often will you practice?'}
+          {step === 5 && 'How long are your study sessions?'}
         </p>
       </div>
 
       <div className="progress-dots">
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className={`dot ${step >= i ? 'active' : ''}`}></div>
         ))}
       </div>
 
       <div className="card">
-        {step === 1 && renderOptions(bandOptions, 'targetBand')}
-        {step === 2 && renderOptions(levelOptions, 'currentLevel')}
-        {step === 3 && renderOptions(scheduleOptions, 'schedule')}
-        {step === 4 && renderOptions(durationOptions, 'duration')}
+        {step === 1 && renderExamTypeOptions()}
+        {step === 2 && renderOptions(bandOptions, 'targetBand')}
+        {step === 3 && renderOptions(levelOptions, 'currentLevel')}
+        {step === 4 && renderOptions(scheduleOptions, 'schedule')}
+        {step === 5 && renderOptions(durationOptions, 'duration')}
 
         <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
           {step > 1 && (
@@ -128,7 +154,7 @@ function Onboarding() {
             </button>
           )}
           
-          {step < 4 ? (
+          {step < 5 ? (
             <button 
               className="btn btn-primary" 
               onClick={handleNext}

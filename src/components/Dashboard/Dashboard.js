@@ -14,11 +14,27 @@ function Dashboard() {
     readingCount: 0,
     listeningCount: 0
   });
-
+const [examType, setExamType] = useState('academic');
   useEffect(() => {
     fetchStats();
   }, []);
-
+useEffect(() => {
+  const fetchExamType = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/user/settings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setExamType(data.examType || 'academic');
+      }
+    } catch (err) {
+      console.error('Failed to fetch exam type:', err);
+    }
+  };
+  fetchExamType();
+}, []);
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -45,7 +61,7 @@ function Dashboard() {
     <div className="dashboard">
       <header className="dashboard-header">
         <div className="header-content">
-          <h1>IELTS Master</h1>
+          <h1>IELTS Master <span className="exam-type-badge">{examType === 'general' ? '🌍 General Training' : '🎓 Academic'}</span></h1>
           <div className="user-section">
             <span className="user-name">{user?.name || 'Student'}</span>
             <button className="settings-btn" onClick={() => navigate('/settings')}>⚙️</button>

@@ -398,16 +398,15 @@ function WritingPractice() {
   const [feedback, setFeedback] = useState(null);
   const [rewrittenEssay, setRewrittenEssay] = useState('');
   const [rewriteLoading, setRewriteLoading] = useState(false);
-  
+  const [examType, setExamType] = useState('academic');
+  const [task1QuestionsFromAPI, setTask1QuestionsFromAPI] = useState([]);
   // Task 2 state
   const [task2Question, setTask2Question] = useState(() =>
     task2Questions[Math.floor(Math.random() * task2Questions.length)]
   );
   
   // Task 1 state
-  const [task1Question, setTask1Question] = useState(() =>
-    task1Questions[Math.floor(Math.random() * task1Questions.length)]
-  );
+const [task1Question, setTask1Question] = useState(null);
 
   // Timer state
   const [timeRemaining, setTimeRemaining] = useState(null);
@@ -427,8 +426,43 @@ function WritingPractice() {
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [selectedTask, timerActive, timeRemaining]);
+    useEffect(() => {
+  const fetchExamTypeAndQuestions = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const API_URL = process.env.REACT_APP_API_URL || 'https://ielts-backend-0u1s.onrender.com';
+      
+      // Fetch user settings
+      const settingsResponse = await fetch(`${API_URL}/api/user/settings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (settingsResponse.ok) {
+        const settingsData = await settingsResponse.json();
+        setExamType(settingsData.examType || 'academic');
+      }
+      
+      // Fetch Task 1 questions
+      const questionsResponse = await fetch(`${API_URL}/api/writing-task1/questions/all`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (questionsResponse.ok) {
+        const questionsData = await questionsResponse.json();
+        setTask1QuestionsFromAPI(questionsData.questions || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch exam type or questions:', err);
+    }
+  };
+  fetchExamTypeAndQuestions();
+}, []);
 
+useEffect(() => {
+  if (task1QuestionsFromAPI.length > 0 && !task1Question) {
+    setTask1Question(task1QuestionsFromAPI[Math.floor(Math.random() * task1QuestionsFromAPI.length)]);
+  }
+}, [task1QuestionsFromAPI]);
+
+  }, [selectedTask, timerActive, timeRemaining]);
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -501,7 +535,8 @@ function WritingPractice() {
     setTimerActive(false);
     setTimeRemaining(null);
     // Get new random questions
-    setTask1Question(task1Questions[Math.floor(Math.random() * task1Questions.length)]);
+    const questions = task1QuestionsFromAPI.length > 0 ? task1QuestionsFromAPI : task1Questions;
+    setTask1Question(questions[Math.floor(Math.random() * questions.length)]);
     setTask2Question(task2Questions[Math.floor(Math.random() * task2Questions.length)]);
   };
 
@@ -509,8 +544,9 @@ function WritingPractice() {
     if (selectedTask === 'task1') {
       let newQuestion;
       do {
-        newQuestion = task1Questions[Math.floor(Math.random() * task1Questions.length)];
-      } while (newQuestion.id === task1Question.id && task1Questions.length > 1);
+       const questions = task1QuestionsFromAPI.length > 0 ? task1QuestionsFromAPI : task1Questions;
+newQuestion = questions[Math.floor(Math.random() * questions.length)];
+} while (newQuestion.id === task1Question.id && questions.length > 1);
       setTask1Question(newQuestion);
     } else {
       let newQuestion;

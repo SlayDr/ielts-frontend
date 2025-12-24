@@ -700,23 +700,39 @@ useEffect(() => {
           <p className="selection-subtitle">Choose your task type to begin</p>
           
           <div className="task-options">
-            <div className="task-card" onClick={() => startTask('task1')}>
-              <div className="task-icon">📊</div>
+          <div className="task-card" onClick={() => startTask('task1')}>
+              <div className="task-icon">{examType === 'general' ? '✉️' : '📊'}</div>
               <h2>Task 1</h2>
               <p className="task-time">⏱️ 20 minutes</p>
               <p className="task-words">📝 Minimum 150 words</p>
               <p className="task-description">
-                Describe visual information such as graphs, charts, tables, maps, or processes.
+                {examType === 'general' 
+                  ? 'Write a letter in response to a given situation.'
+                  : 'Describe visual information such as graphs, charts, tables, maps, or processes.'}
               </p>
               <ul className="task-types">
-                <li>Line graphs</li>
-                <li>Bar charts</li>
-                <li>Pie charts</li>
-                <li>Tables</li>
-                <li>Maps</li>
-                <li>Process diagrams</li>
+                {examType === 'general' ? (
+                  <>
+                    <li>Formal letters</li>
+                    <li>Semi-formal letters</li>
+                    <li>Informal letters</li>
+                    <li>Complaints</li>
+                    <li>Requests</li>
+                    <li>Applications</li>
+                  </>
+                ) : (
+                  <>
+                    <li>Line graphs</li>
+                    <li>Bar charts</li>
+                    <li>Pie charts</li>
+                    <li>Tables</li>
+                    <li>Maps</li>
+                    <li>Process diagrams</li>
+                  </>
+                )}
               </ul>
               <button className="start-task-btn">Start Task 1</button>
+            </div>  
             </div>
             
             <div className="task-card" onClick={() => startTask('task2')}>

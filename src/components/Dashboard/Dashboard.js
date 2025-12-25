@@ -15,6 +15,13 @@ function Dashboard() {
     listeningCount: 0
   });
 const [examType, setExamType] = useState('academic');
+const [targetBand, setTargetBand] = useState(7);
+const [averages, setAverages] = useState({
+  writing: null,
+  speaking: null,
+  reading: null,
+  listening: null
+});
   useEffect(() => {
     fetchStats();
   }, []);
@@ -28,12 +35,30 @@ useEffect(() => {
       if (response.ok) {
         const data = await response.json();
         setExamType(data.examType || 'academic');
+        setTargetBand(data.targetBand || 7);
       }
     } catch (err) {
       console.error('Failed to fetch exam type:', err);
     }
   };
   fetchExamType();
+}, []);
+useEffect(() => {
+  const fetchAverages = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/user/averages`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAverages(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch averages:', err);
+    }
+  };
+  fetchAverages();
 }, []);
   const fetchStats = async () => {
     try {
@@ -102,6 +127,63 @@ useEffect(() => {
           </div>
         </section>
 
+<section className="target-section">
+          <h3>🎯 Target Band: {targetBand}</h3>
+          <div className="target-grid">
+            <div className="target-card">
+              <span className="skill-name">Writing</span>
+              <div className="score-display">
+                <span className="current-score">{averages.writing !== null ? averages.writing.toFixed(1) : '-'}</span>
+                <span className="target-arrow">→</span>
+                <span className="target-score">{targetBand}</span>
+              </div>
+              {averages.writing !== null && (
+                <span className={`gap-indicator ${averages.writing >= targetBand ? 'achieved' : ''}`}>
+                  {averages.writing >= targetBand ? '✅ Target reached!' : `${(targetBand - averages.writing).toFixed(1)} to go`}
+                </span>
+              )}
+            </div>
+            <div className="target-card">
+              <span className="skill-name">Speaking</span>
+              <div className="score-display">
+                <span className="current-score">{averages.speaking !== null ? averages.speaking.toFixed(1) : '-'}</span>
+                <span className="target-arrow">→</span>
+                <span className="target-score">{targetBand}</span>
+              </div>
+              {averages.speaking !== null && (
+                <span className={`gap-indicator ${averages.speaking >= targetBand ? 'achieved' : ''}`}>
+                  {averages.speaking >= targetBand ? '✅ Target reached!' : `${(targetBand - averages.speaking).toFixed(1)} to go`}
+                </span>
+              )}
+            </div>
+            <div className="target-card">
+              <span className="skill-name">Reading</span>
+              <div className="score-display">
+                <span className="current-score">{averages.reading !== null ? averages.reading.toFixed(1) : '-'}</span>
+                <span className="target-arrow">→</span>
+                <span className="target-score">{targetBand}</span>
+              </div>
+              {averages.reading !== null && (
+                <span className={`gap-indicator ${averages.reading >= targetBand ? 'achieved' : ''}`}>
+                  {averages.reading >= targetBand ? '✅ Target reached!' : `${(targetBand - averages.reading).toFixed(1)} to go`}
+                </span>
+              )}
+            </div>
+            <div className="target-card">
+              <span className="skill-name">Listening</span>
+              <div className="score-display">
+                <span className="current-score">{averages.listening !== null ? averages.listening.toFixed(1) : '-'}</span>
+                <span className="target-arrow">→</span>
+                <span className="target-score">{targetBand}</span>
+              </div>
+              {averages.listening !== null && (
+                <span className={`gap-indicator ${averages.listening >= targetBand ? 'achieved' : ''}`}>
+                  {averages.listening >= targetBand ? '✅ Target reached!' : `${(targetBand - averages.listening).toFixed(1)} to go`}
+                </span>
+              )}
+            </div>
+          </div>
+        </section>
         <section className="total-section">
           <div className="total-card">
             <div className="total-info">

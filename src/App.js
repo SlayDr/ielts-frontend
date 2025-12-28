@@ -18,6 +18,8 @@ import PracticeModules from './pages/PracticeModules';
 import ProfileSettings from './pages/ProfileSettings';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Upgrade from './pages/Upgrade';
+import UpgradeSuccess from './pages/UpgradeSuccess';
 // Protected Route Component
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -137,6 +139,22 @@ function AppRoutes() {
   element={
     <ProtectedRoute>
       <ListeningHistory />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/upgrade"
+  element={
+    <ProtectedRoute>
+      <Upgrade />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/upgrade/success"
+  element={
+    <ProtectedRoute>
+      <UpgradeSuccess />
     </ProtectedRoute>
   }
 />

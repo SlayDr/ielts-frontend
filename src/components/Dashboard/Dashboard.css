@@ -376,3 +376,94 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+/* Usage Section */
+.usage-section {
+  margin: 20px 0;
+}
+
+.usage-section h3 {
+  color: white;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.usage-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.usage-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.usage-icon {
+  font-size: 1.5rem;
+}
+
+.usage-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.usage-count {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.usage-bar {
+  background: #e0e0e0;
+  border-radius: 10px;
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.usage-progress {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.usage-warning {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.upgrade-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.upgrade-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.premium-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+}

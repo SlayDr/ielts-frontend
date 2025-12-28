@@ -16,6 +16,7 @@ function Dashboard() {
   });
 const [examType, setExamType] = useState('academic');
 const [targetBand, setTargetBand] = useState(7);
+const [usage, setUsage] = useState(null);
 const [averages, setAverages] = useState({
   writing: null,
   speaking: null,
@@ -59,6 +60,23 @@ useEffect(() => {
     }
   };
   fetchAverages();
+}, []);
+useEffect(() => {
+  const fetchUsage = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/user/usage`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsage(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch usage:', err);
+    }
+  };
+  fetchUsage();
 }, []);
   const fetchStats = async () => {
     try {
@@ -184,6 +202,44 @@ useEffect(() => {
             </div>
           </div>
         </section>
+         {usage && (
+          <section className="usage-section">
+            <h3>📊 Today's Usage</h3>
+            <div className="usage-card">
+              <div className="usage-info">
+                <span className="usage-icon">🤖</span>
+                <span className="usage-label">AI Evaluations</span>
+                <span className="usage-count">
+                  {usage.isPremium ? '∞' : `${usage.usage.aiEvaluations.used}/${usage.usage.aiEvaluations.limit}`}
+                </span>
+              </div>
+              {!usage.isPremium && (
+                <div className="usage-bar">
+                  <div 
+                    className="usage-progress" 
+                    style={{ width: `${(usage.usage.aiEvaluations.used / usage.usage.aiEvaluations.limit) * 100}%` }}
+                  ></div>
+                </div>
+              )}
+              {!usage.isPremium && usage.usage.aiEvaluations.remaining <= 1 && (
+                <p className="usage-warning">
+                  ⚠️ {usage.usage.aiEvaluations.remaining === 0 
+                    ? 'Limit reached! Upgrade for unlimited access.' 
+                    : 'Only 1 evaluation left today!'}
+                </p>
+              )}
+              {!usage.isPremium && (
+                <button className="upgrade-btn" onClick={() => navigate('/upgrade')}>
+                  ⭐ Upgrade to Premium
+                </button>
+              )}
+              {usage.isPremium && (
+                <span className="premium-badge">⭐ Premium Member</span>
+              )}
+            </div>
+          </section>
+        )}
+
         <section className="total-section">
           <div className="total-card">
             <div className="total-info">

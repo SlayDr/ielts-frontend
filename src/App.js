@@ -20,6 +20,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Upgrade from './pages/Upgrade';
 import UpgradeSuccess from './pages/UpgradeSuccess';
+import LandingPage from './pages/LandingPage';
 // Protected Route Component
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -159,7 +160,7 @@ function AppRoutes() {
   }
 />
       {/* Default Route */}
-      <Route path="/" element={<Navigate to="/dashboard" />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );

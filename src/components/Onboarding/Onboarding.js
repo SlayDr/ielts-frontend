@@ -104,13 +104,12 @@ function Onboarding() {
     ));
   };
 
-  const canProceed = () => {
+const canProceed = () => {
     switch (step) {
       case 1: return formData.examType !== '';
       case 2: return formData.targetBand !== '';
-      case 3: return formData.currentLevel !== '';
-      case 4: return formData.schedule !== '';
-      case 5: return formData.duration !== '';
+      case 3: return formData.schedule !== '';
+      case 4: return formData.duration !== '';
       default: return false;
     }
   };

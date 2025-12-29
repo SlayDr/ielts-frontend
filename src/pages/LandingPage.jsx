@@ -97,26 +97,7 @@ const LandingPage = () => {
     }
   ];
 
-  const testimonials = [
-    {
-      name: 'Sarah M.',
-      score: 'Band 7.5',
-      text: 'The AI feedback helped me identify exactly where I was losing marks in Writing Task 2. Improved from 6.0 to 7.5 in just 6 weeks!',
-      country: '🇮🇳 India'
-    },
-    {
-      name: 'Ahmed K.',
-      score: 'Band 8.0',
-      text: 'The speaking practice with instant feedback was a game-changer. I could practice anytime without needing a tutor.',
-      country: '🇪🇬 Egypt'
-    },
-    {
-      name: 'Li Wei',
-      score: 'Band 7.0',
-      text: 'Finally achieved my target score for university admission. The target band tracking kept me motivated throughout.',
-      country: '🇨🇳 China'
-    }
-  ];
+  
 
   return (
     <div className="landing-page">
@@ -215,21 +196,14 @@ const LandingPage = () => {
       {/* Testimonials Section */}
       <section className="testimonials-section">
         <h2>Success Stories</h2>
-        <p className="section-subtitle">Join thousands of students who achieved their target scores</p>
-        <div className="testimonials-grid">
-          {testimonials.map((testimonial, index) => (
-            <div key={index} className="testimonial-card">
-              <div className="testimonial-header">
-                <div className="testimonial-avatar">{testimonial.name[0]}</div>
-                <div className="testimonial-info">
-                  <span className="testimonial-name">{testimonial.name}</span>
-                  <span className="testimonial-country">{testimonial.country}</span>
-                </div>
-                <span className="testimonial-score">{testimonial.score}</span>
-              </div>
-              <p className="testimonial-text">"{testimonial.text}"</p>
-            </div>
-          ))}
+        <p className="section-subtitle">Join our growing community of IELTS achievers</p>
+        <div className="testimonials-placeholder">
+          <div className="placeholder-icon">🌟</div>
+          <h3>Be One of Our First Success Stories!</h3>
+          <p>We're just getting started. Achieve your target band score and inspire others on their IELTS journey.</p>
+          <button className="placeholder-cta" onClick={() => navigate('/signup')}>
+            Start Your Journey
+          </button>
         </div>
       </section>
 

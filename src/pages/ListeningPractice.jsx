@@ -397,42 +397,33 @@ const ListeningPractice = () => {
               </div>
             </section>
           ) : (
-            <section className="section-selection">
+        <section className="section-selection">
               <div className="sections-grid">
-              {sections.slice(0, 6).map(section => (
-                <div
-                  key={section.id}
-                  className={`section-card ${isSectionCompleted(section.id) ? 'completed' : ''}`}
-                  onClick={() => selectSection(section.id)}
-                >
+                {sections.map(section => (
+                  <div
+                    key={section.id}
+                    className={`section-card ${isSectionCompleted(section.id) ? 'completed' : ''} ${section.locked ? 'locked' : ''}`}
+                    onClick={() => !section.locked && selectSection(section.id)}
+                  >
                     <div className="section-header">
                       {isSectionCompleted(section.id) && <span className="completed-badge">✓ Completed</span>}
-                      {/* <span className="part-badge">Part {section.part}</span> */}
-                      {/* <span className="question-count">{section.questionCount} questions</span> */}
+                      {section.locked && <span className="locked-badge">🔒 Premium</span>}
                     </div>
                     <h3>{section.title}</h3>
                     <p className="section-description">{section.description}</p>
-                    <button className="start-btn">Start Practice →</button>
+                    {section.locked ? (
+                      <button className="upgrade-btn" onClick={(e) => { e.stopPropagation(); navigate('/upgrade'); }}>
+                        Upgrade to Unlock
+                      </button>
+                    ) : (
+                      <button className="start-btn">Start Practice →</button>
+                    )}
                   </div>
                 ))}
-                {sections.length > 6 && (
-                <div className="section-card more-sections-card">
-                  <div className="section-header">
-                    <span className="more-badge">✨ More Content</span>
-                  </div>
-                  <h3>More Sections Available</h3>
-                  <div className="more-tests-content">
-                    <p>Keep practicing to unlock more listening sections!</p>
-                  </div>
-                  <button className="start-btn" onClick={() => selectSection(sections[6].id)}>
-                    Try Next Section →
-                  </button>
-                </div>
-              )}
               </div>
             </section>
           )}
-        </main>
+        </main>    
       </div>
     );
   }

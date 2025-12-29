@@ -1108,3 +1108,51 @@
 .section-card.just-completed {
   animation: completedPulse 1s ease-out;
 }
+/* Locked Content Styles */
+.passage-card.locked {
+  opacity: 0.7;
+  position: relative;
+  cursor: not-allowed;
+}
+
+.passage-card.locked::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.passage-card.locked > * {
+  position: relative;
+  z-index: 2;
+}
+
+.locked-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.passage-card .upgrade-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.passage-card .upgrade-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}

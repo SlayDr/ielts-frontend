@@ -392,37 +392,29 @@ useEffect(() => {
               </div>
             </section>
           ) : (
-            <section className="passage-selection">
+<section className="passage-selection">
               <div className="passages-grid">
-        {passages.slice(0, 6).map(passage => (
+                {passages.map(passage => (
                   <div
                     key={passage.id}
-                    className={`passage-card ${isPassageCompleted(passage.id) ? 'completed' : ''}`}
-                    onClick={() => selectPassage(passage.id)}
+                    className={`passage-card ${isPassageCompleted(passage.id) ? 'completed' : ''} ${passage.locked ? 'locked' : ''}`}
+                    onClick={() => !passage.locked && selectPassage(passage.id)}
                   >
                     <div className="passage-header">
                       {isPassageCompleted(passage.id) && <span className="completed-badge">✓ Completed</span>}
-                      {/* <span className="question-count">{passage.questionCount} questions</span> */}
+                      {passage.locked && <span className="locked-badge">🔒 Premium</span>}
                     </div>
                     <h3>{passage.title}</h3>
                     <p className="passage-topic">{passage.topic}</p>
-                    <button className="start-btn">Start Practice →</button>
+                    {passage.locked ? (
+                      <button className="upgrade-btn" onClick={(e) => { e.stopPropagation(); navigate('/upgrade'); }}>
+                        Upgrade to Unlock
+                      </button>
+                    ) : (
+                      <button className="start-btn">Start Practice →</button>
+                    )}
                   </div>
                 ))}
-                {passages.length > 6 && (
-                  <div className="passage-card more-passages-card">
-                    <div className="passage-header">
-                      <span className="more-badge">✨ More Content</span>
-                    </div>
-                    <h3>More Passages Available</h3>
-                    <div className="more-tests-content">
-                      <p>Keep practicing to unlock more reading passages on various topics!</p>
-                    </div>
-                    <button className="start-btn" onClick={() => selectPassage(passages[6].id)}>
-                      Try Next Passage →
-                    </button>
-                  </div>
-                )}
               </div>
             </section>
           )}

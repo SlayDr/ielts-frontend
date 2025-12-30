@@ -229,9 +229,12 @@ useEffect(() => {
                 </p>
               )}
               {!usage.isPremium && (
-                <button className="upgrade-btn" onClick={() => navigate('/upgrade')}>
-                  ⭐ Upgrade to Premium
-                </button>
+                <>
+                  <span className="free-badge">🆓 Free Member</span>
+                  <button className="upgrade-btn" onClick={() => navigate('/upgrade')}>
+                    ⭐ Upgrade to Premium
+                  </button>
+                </>
               )}
               {usage.isPremium && (
                 <span className="premium-badge">⭐ Premium Member</span>

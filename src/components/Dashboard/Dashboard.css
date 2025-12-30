@@ -467,3 +467,13 @@
   border-radius: 20px;
   font-weight: 600;
 }
+
+.free-badge {
+  display: inline-block;
+  background: #e0e0e0;
+  color: #555;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}

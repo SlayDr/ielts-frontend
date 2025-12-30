@@ -60,9 +60,12 @@ function Login() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+         <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Connecting... Please wait' : 'Sign In'}
           </button>
+          {loading && (
+            <p className="loading-message">First connection may take a few seconds...</p>
+          )}
         </form>
 <Link to="/forgot-password" className="forgot-link">Forgot Password?</Link>
         <p className="text-center mt-20">

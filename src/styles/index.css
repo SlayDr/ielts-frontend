@@ -527,3 +527,16 @@ body {
 .forgot-link:hover {
   text-decoration: underline;
 }
+/* Loading message for auth */
+.loading-message {
+  text-align: center;
+  color: #888;
+  font-size: 0.85rem;
+  margin-top: 10px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

@@ -72,9 +72,12 @@ function Signup() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create Account'}
+         <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Connecting... Please wait' : 'Create Account'}
           </button>
+          {loading && (
+            <p className="loading-message">First connection may take a few seconds...</p>
+          )}
         </form>
 
         <p className="text-center mt-20">

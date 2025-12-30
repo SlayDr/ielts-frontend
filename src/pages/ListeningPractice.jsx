@@ -355,17 +355,17 @@ const ListeningPractice = () => {
               <p>Loading...</p>
             </div>
           ) : mode === 'fulltest' ? (
-            <section className="section-selection">
+ <section className="section-selection">
               <div className="sections-grid">
-               {fullTests.slice(0, 4).map(test => (
+                {fullTests.map(test => (
                   <div
                     key={test.id}
-                    className={`section-card fulltest-card ${isTestCompleted(test.id) ? 'completed' : ''}`}
-                    onClick={() => selectFullTest(test.id)}
+                    className={`section-card fulltest-card ${isTestCompleted(test.id) ? 'completed' : ''} ${test.locked ? 'locked' : ''}`}
+                    onClick={() => !test.locked && selectFullTest(test.id)}
                   >
                     <div className="section-header">
                       {isTestCompleted(test.id) && <span className="completed-badge">✓ Completed</span>}
-                    {/* <span className="question-count">{test.totalQuestions} questions</span> */}
+                      {test.locked && <span className="locked-badge">🔒 Premium</span>}
                     </div>
                     <h3>{test.title}</h3>
                     <div className="test-sections">
@@ -373,31 +373,22 @@ const ListeningPractice = () => {
                         <div key={s.id} className="test-section-item">
                           <span className="section-number">Part {idx + 1}:</span>
                           <span className="section-title">{s.title}</span>
-                         {/* <span className="section-questions">({s.questionCount} Q)</span> */}
                         </div>
                       ))}
                     </div>
-                    <button className="start-btn">Start Test →</button>
+                    {test.locked ? (
+                      <button className="upgrade-btn" onClick={(e) => { e.stopPropagation(); navigate('/upgrade'); }}>
+                        Upgrade to Unlock
+                      </button>
+                    ) : (
+                      <button className="start-btn">Start Test →</button>
+                    )}
                   </div>
                 ))}
-                {fullTests.length > 4 && (
-                  <div className="section-card fulltest-card more-tests-card">
-                    <div className="section-header">
-                      <span className="more-badge">✨ More Content</span>
-                    </div>
-                    <h3>More Tests Available</h3>
-                    <div className="more-tests-content">
-                      <p>Continue practicing to discover more full-length IELTS Listening tests!</p>
-                    </div>
-                    <button className="start-btn" onClick={() => selectFullTest(fullTests[4].id)}>
-                      Try Next Test →
-                    </button>
-                  </div>
-                )}
               </div>
             </section>
-          ) : (
-        <section className="section-selection">
+        ) : (
+            <section className="section-selection">
               <div className="sections-grid">
                 {sections.map(section => (
                   <div

@@ -394,3 +394,133 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Subscription Tab Styles */
+.subscription-content {
+  padding: 20px 0;
+}
+
+.subscription-status {
+  text-align: center;
+  padding: 30px;
+  background: #f8f9ff;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.subscription-status h3 {
+  color: #666;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+.plan-badge {
+  display: inline-block;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.plan-badge.premium {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.plan-badge.free {
+  background: #e0e0e0;
+  color: #555;
+}
+
+.expiry-date {
+  margin-top: 15px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.premium-info, .free-info {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid #eee;
+}
+
+.premium-info h3, .free-info h3 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.benefits-list, .limits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 30px 0;
+}
+
+.benefits-list li, .limits-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+}
+
+.benefits-list li:last-child, .limits-list li:last-child {
+  border-bottom: none;
+}
+
+.cancel-section, .upgrade-section {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid #eee;
+}
+
+.cancel-section h4, .upgrade-section h4 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.cancel-warning {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.cancel-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #c0392b;
+}
+
+.cancel-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.upgrade-section p {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.upgrade-btn-large {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.upgrade-btn-large:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}

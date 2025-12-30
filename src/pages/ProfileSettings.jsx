@@ -25,6 +25,13 @@ const ProfileSettings = () => {
     confirmPassword: ''
   });
 
+// Subscription state
+  const [subscription, setSubscription] = useState({
+    status: 'free',
+    isPremium: false,
+    expiryDate: null
+  });
+  const [cancelLoading, setCancelLoading] = useState(false);  
   // Settings state
   const [settings, setSettings] = useState({
     examType: 'academic',
@@ -37,6 +44,7 @@ const ProfileSettings = () => {
   useEffect(() => {
     fetchProfile();
     fetchSettings();
+    fetchSubscription();
   }, []);
 
   const fetchProfile = async () => {
@@ -75,6 +83,50 @@ const ProfileSettings = () => {
     }
   };
 
+  const fetchSubscription = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/stripe/subscription`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSubscription({
+          status: data.subscription,
+          isPremium: data.isPremium,
+          expiryDate: data.subscriptionExpiry
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch subscription:', err);
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    if (!window.confirm('Are you sure you want to cancel your Premium subscription? You will lose access to premium features at the end of your billing period.')) {
+      return;
+    }
+    
+    setCancelLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/stripe/cancel-subscription`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Subscription cancelled successfully' });
+        setSubscription({ status: 'free', isPremium: false, expiryDate: null });
+      } else {
+        const data = await response.json();
+        setMessage({ type: 'error', text: data.error || 'Failed to cancel subscription' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to cancel subscription' });
+    }
+    setCancelLoading(false);
+  };
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -218,6 +270,12 @@ const ProfileSettings = () => {
             onClick={() => { setActiveTab('study'); setMessage({ type: '', text: '' }); }}
           >
             📚 Study Plan
+          </button>
+          <button
+            className={`tab ${activeTab === 'subscription' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('subscription'); setMessage({ type: '', text: '' }); }}
+          >
+            💳 Subscription
           </button>
         </div>
 
@@ -387,6 +445,73 @@ const ProfileSettings = () => {
               </button>
             </form>
           )}
+         {activeTab === 'subscription' && (
+            <div className="subscription-content">
+              <div className="subscription-status">
+                <h3>Current Plan</h3>
+                <div className={`plan-badge ${subscription.isPremium ? 'premium' : 'free'}`}>
+                  {subscription.isPremium ? '⭐ Premium' : '🆓 Free'}
+                </div>
+                {subscription.isPremium && subscription.expiryDate && (
+                  <p className="expiry-date">
+                    Valid until: {new Date(subscription.expiryDate).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+
+              {subscription.isPremium ? (
+                <div className="premium-info">
+                  <h3>Your Premium Benefits</h3>
+                  <ul className="benefits-list">
+                    <li>✅ Unlimited AI evaluations</li>
+                    <li>✅ Access to all Reading passages</li>
+                    <li>✅ Access to all Listening sections</li>
+                    <li>✅ All Writing prompts</li>
+                    <li>✅ All Speaking Parts (1, 2 & 3)</li>
+                    <li>✅ All Full Tests</li>
+                    <li>✅ Detailed model answers</li>
+                  </ul>
+                  
+                  <div className="cancel-section">
+                    <h4>Cancel Subscription</h4>
+                    <p className="cancel-warning">
+                      If you cancel, you'll lose access to premium features at the end of your billing period.
+                    </p>
+                    <button 
+                      className="cancel-btn" 
+                      onClick={handleCancelSubscription}
+                      disabled={cancelLoading}
+                    >
+                      {cancelLoading ? 'Cancelling...' : 'Cancel Subscription'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="free-info">
+                  <h3>Free Plan Limits</h3>
+                  <ul className="limits-list">
+                    <li>⚠️ 3 AI evaluations per day</li>
+                    <li>⚠️ 5 Reading passages</li>
+                    <li>⚠️ 5 Listening sections</li>
+                    <li>⚠️ 5 Writing prompts</li>
+                    <li>⚠️ Speaking Part 1 only</li>
+                    <li>⚠️ 1 Full Test per module</li>
+                  </ul>
+                  
+                  <div className="upgrade-section">
+                    <h4>Upgrade to Premium</h4>
+                    <p>Get unlimited access to all features and content.</p>
+                    <button 
+                      className="upgrade-btn-large" 
+                      onClick={() => navigate('/upgrade')}
+                    >
+                      ⭐ Upgrade to Premium
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )} 
         </div>
       </main>
     </div>

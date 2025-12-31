@@ -73,7 +73,7 @@ const EssayHistory = () => {
       switch (sortBy) {
         case 'newest': return new Date(b.createdAt) - new Date(a.createdAt);
         case 'oldest': return new Date(a.createdAt) - new Date(b.createdAt);
-        case 'highest': return (b.score || 0) - (a.score || 0);
+       case 'highest': return (b.score || b.feedback?.overallBand || 0) - (a.score || a.feedback?.overallBand || 0); 
         case 'lowest': return (a.score || 0) - (b.score || 0);
         default: return 0;
       }
@@ -83,7 +83,7 @@ const EssayHistory = () => {
 
   const calculateStats = () => {
     if (essays.length === 0) return { total: 0, average: 0, highest: 0 };
-    const scores = essays.filter(e => e.score).map(e => e.score);
+   const scores = essays.filter(e => e.score || e.feedback?.overallBand).map(e => e.score || e.feedback?.overallBand);
     return {
       total: essays.length,
       average: scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : 0,
@@ -150,7 +150,7 @@ const EssayHistory = () => {
                 <div className="essay-card-header" onClick={() => setExpandedEssay(expandedEssay === (essay._id || essay.id) ? null : (essay._id || essay.id))}>
                   <div className="essay-main-info">
                     <span className="task-type-badge">{getTaskTypeLabel(essay.taskType)}</span>
-                    <h3 className="essay-topic">{truncateText(essay.topic || essay.prompt || 'Untitled Essay', 80)}</h3>
+                   <h3 className="essay-topic">{truncateText(essay.topic || essay.prompt || essay.question || 'Untitled Essay', 80)}</h3>
                     <span className="essay-date">{formatDate(essay.createdAt)}</span>
                   </div>
                   <div className="essay-score-section">

@@ -84,31 +84,31 @@ const SpeakingHistory = () => {
               <span className="total-count">{sessions.length} session{sessions.length !== 1 ? 's' : ''}</span>
             </div>
             {sessions.map((session, index) => (
-              <div key={session._id || index} className="session-card">
-                <div className="session-header">
-                  <span className="part-badge">Part {session.part}</span>
-                  <span className={`band-badge ${getBandColor(session.bandScore)}`}>
-                    Band {session.bandScore}
-                  </span>
-                </div>
-                <div className="session-question">
-                  <strong>Question:</strong> {session.question}
-                </div>
-                <div className="session-meta">
-                  <span className="date">{formatDate(session.createdAt)}</span>
-                </div>
-                {session.feedback && (
-                  <div className="session-feedback">
-                    <div className="feedback-scores">
-                      <span>Fluency: {session.feedback.fluency}</span>
-                      <span>Vocabulary: {session.feedback.vocabulary}</span>
-                      <span>Grammar: {session.feedback.grammar}</span>
-                      <span>Pronunciation: {session.feedback.pronunciation}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+  <div key={session._id || index} className="session-card">
+    <div className="session-header">
+      <span className="part-badge">Part {session.part}</span>
+      <span className={`band-badge ${getBandColor(session.feedback?.overallBand || session.bandScore)}`}>
+        Band {session.feedback?.overallBand || session.bandScore || 'N/A'}
+      </span>
+    </div>
+    <div className="session-question">
+      <strong>Question:</strong> {session.question}
+    </div>
+    <div className="session-meta">
+      <span className="date">{formatDate(session.createdAt)}</span>
+    </div>
+    {session.feedback && (
+      <div className="session-feedback">
+        <div className="feedback-scores">
+          <span>Fluency: {session.feedback.fluencyCoherence || session.feedback.fluency || 'N/A'}</span>
+          <span>Vocabulary: {session.feedback.lexicalResource || session.feedback.vocabulary || 'N/A'}</span>
+          <span>Grammar: {session.feedback.grammaticalRange || session.feedback.grammar || 'N/A'}</span>
+          <span>Pronunciation: {session.feedback.pronunciation || 'N/A'}</span>
+        </div>
+      </div>
+    )}
+  </div>
+))}
           </div>
         )}
       </main>

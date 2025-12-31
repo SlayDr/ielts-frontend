@@ -52,6 +52,18 @@ const ReadingHistory = () => {
     return Math.round((score / total) * 100);
   };
 
+  const calculateStats = () => {
+    if (sessions.length === 0) return { total: 0, average: 0, highest: 0 };
+    const scores = sessions.filter(s => s.bandScore).map(s => s.bandScore);
+    return {
+      total: sessions.length,
+      average: scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : 0,
+      highest: scores.length > 0 ? Math.max(...scores) : 0
+    };
+  };
+
+  const stats = calculateStats();
+
   return (
     <div className="reading-history">
       <header className="history-header">
@@ -83,40 +95,63 @@ const ReadingHistory = () => {
             <button onClick={() => navigate('/reading')}>Start Reading Practice</button>
           </div>
         ) : (
-          <div className="sessions-list">
-            <div className="list-header">
-              <span className="total-count">{sessions.length} session{sessions.length !== 1 ? 's' : ''}</span>
-            </div>
-            {sessions.map((session, index) => (
-              <div key={session._id || index} className="session-card">
-                <div className="session-header">
-                  <h3 className="passage-title">{session.passageTitle}</h3>
-                  <span className={`band-badge ${getBandColor(session.bandScore)}`}>
-                    Band {session.bandScore}
-                  </span>
-                </div>
-                <div className="session-stats">
-                  <div className="stat-item">
-                    <span className="stat-value">{session.score}/{session.totalQuestions}</span>
-                    <span className="stat-label">Correct</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-value">{getScorePercentage(session.score, session.totalQuestions)}%</span>
-                    <span className="stat-label">Score</span>
-                  </div>
-                  {session.timeSpent && (
-                    <div className="stat-item">
-                      <span className="stat-value">{Math.floor(session.timeSpent / 60)}:{(session.timeSpent % 60).toString().padStart(2, '0')}</span>
-                      <span className="stat-label">Time</span>
-                    </div>
-                  )}
-                </div>
-                <div className="session-meta">
-                  <span className="date">{formatDate(session.createdAt)}</span>
+          <>
+            <section className="stats-section">
+              <div className="stat-card">
+                <div className="stat-icon">📖</div>
+                <div className="stat-info">
+                  <span className="stat-value">{stats.total}</span>
+                  <span className="stat-label">Total Sessions</span>
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="stat-card">
+                <div className="stat-icon">📊</div>
+                <div className="stat-info">
+                  <span className="stat-value">{stats.average}</span>
+                  <span className="stat-label">Average Band</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">🏆</div>
+                <div className="stat-info">
+                  <span className="stat-value">{stats.highest}</span>
+                  <span className="stat-label">Highest Score</span>
+                </div>
+              </div>
+            </section>
+
+            <div className="sessions-list">
+              {sessions.map((session, index) => (
+                <div key={session._id || index} className="session-card">
+                  <div className="session-header">
+                    <h3 className="passage-title">{session.passageTitle}</h3>
+                    <span className={`band-badge ${getBandColor(session.bandScore)}`}>
+                      Band {session.bandScore}
+                    </span>
+                  </div>
+                  <div className="session-stats">
+                    <div className="stat-item">
+                      <span className="stat-value">{session.score}/{session.totalQuestions}</span>
+                      <span className="stat-label">Correct</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-value">{getScorePercentage(session.score, session.totalQuestions)}%</span>
+                      <span className="stat-label">Score</span>
+                    </div>
+                    {session.timeSpent && (
+                      <div className="stat-item">
+                        <span className="stat-value">{Math.floor(session.timeSpent / 60)}:{(session.timeSpent % 60).toString().padStart(2, '0')}</span>
+                        <span className="stat-label">Time</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="session-meta">
+                    <span className="date">{formatDate(session.createdAt)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </main>
     </div>

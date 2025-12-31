@@ -48,6 +48,20 @@ const SpeakingHistory = () => {
     return 'band-low';
   };
 
+  const calculateStats = () => {
+    if (sessions.length === 0) return { total: 0, average: 0, highest: 0 };
+    const scores = sessions
+      .filter(s => s.feedback?.overallBand || s.bandScore)
+      .map(s => s.feedback?.overallBand || s.bandScore);
+    return {
+      total: sessions.length,
+      average: scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : 0,
+      highest: scores.length > 0 ? Math.max(...scores) : 0
+    };
+  };
+
+  const stats = calculateStats();
+
   return (
     <div className="speaking-history">
       <header className="history-header">
@@ -79,37 +93,60 @@ const SpeakingHistory = () => {
             <button onClick={() => navigate('/speaking')}>Start Speaking Practice</button>
           </div>
         ) : (
-          <div className="sessions-list">
-            <div className="list-header">
-              <span className="total-count">{sessions.length} session{sessions.length !== 1 ? 's' : ''}</span>
+          <>
+            <section className="stats-section">
+              <div className="stat-card">
+                <div className="stat-icon">🎤</div>
+                <div className="stat-info">
+                  <span className="stat-value">{stats.total}</span>
+                  <span className="stat-label">Total Sessions</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">📊</div>
+                <div className="stat-info">
+                  <span className="stat-value">{stats.average}</span>
+                  <span className="stat-label">Average Band</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">🏆</div>
+                <div className="stat-info">
+                  <span className="stat-value">{stats.highest}</span>
+                  <span className="stat-label">Highest Score</span>
+                </div>
+              </div>
+            </section>
+
+            <div className="sessions-list">
+              {sessions.map((session, index) => (
+                <div key={session._id || index} className="session-card">
+                  <div className="session-header">
+                    <span className="part-badge">Part {session.part}</span>
+                    <span className={`band-badge ${getBandColor(session.feedback?.overallBand || session.bandScore)}`}>
+                      Band {session.feedback?.overallBand || session.bandScore || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="session-question">
+                    <strong>Question:</strong> {session.question}
+                  </div>
+                  <div className="session-meta">
+                    <span className="date">{formatDate(session.createdAt)}</span>
+                  </div>
+                  {session.feedback && (
+                    <div className="session-feedback">
+                      <div className="feedback-scores">
+                        <span>Fluency: {session.feedback.fluencyCoherence || session.feedback.fluency || 'N/A'}</span>
+                        <span>Vocabulary: {session.feedback.lexicalResource || session.feedback.vocabulary || 'N/A'}</span>
+                        <span>Grammar: {session.feedback.grammaticalRange || session.feedback.grammar || 'N/A'}</span>
+                        <span>Pronunciation: {session.feedback.pronunciation || 'N/A'}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-            {sessions.map((session, index) => (
-  <div key={session._id || index} className="session-card">
-    <div className="session-header">
-      <span className="part-badge">Part {session.part}</span>
-      <span className={`band-badge ${getBandColor(session.feedback?.overallBand || session.bandScore)}`}>
-        Band {session.feedback?.overallBand || session.bandScore || 'N/A'}
-      </span>
-    </div>
-    <div className="session-question">
-      <strong>Question:</strong> {session.question}
-    </div>
-    <div className="session-meta">
-      <span className="date">{formatDate(session.createdAt)}</span>
-    </div>
-    {session.feedback && (
-      <div className="session-feedback">
-        <div className="feedback-scores">
-          <span>Fluency: {session.feedback.fluencyCoherence || session.feedback.fluency || 'N/A'}</span>
-          <span>Vocabulary: {session.feedback.lexicalResource || session.feedback.vocabulary || 'N/A'}</span>
-          <span>Grammar: {session.feedback.grammaticalRange || session.feedback.grammar || 'N/A'}</span>
-          <span>Pronunciation: {session.feedback.pronunciation || 'N/A'}</span>
-        </div>
-      </div>
-    )}
-  </div>
-))}
-          </div>
+          </>
         )}
       </main>
     </div>

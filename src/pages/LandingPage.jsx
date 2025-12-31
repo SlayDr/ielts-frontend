@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'IELTS Master - AI-Powered IELTS Preparation | Get Band 7+ with Smart Practice';
+  }, []);
 
   const features = [
     {
@@ -97,12 +101,9 @@ const LandingPage = () => {
     }
   ];
 
-  
-
   return (
     <div className="landing-page">
-      {/* Navigation */}
-      <nav className="landing-nav">
+      <nav className="landing-nav" aria-label="Main navigation">
         <div className="nav-logo">🎓 IELTS Master</div>
         <div className="nav-buttons">
           <button className="nav-login" onClick={() => navigate('/login')}>Login</button>
@@ -110,8 +111,7 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="hero-section">
+      <header className="hero-section">
         <div className="hero-content">
           <h1>Ace Your IELTS Exam with AI-Powered Practice</h1>
           <p className="hero-subtitle">
@@ -128,7 +128,7 @@ const LandingPage = () => {
           </div>
           <p className="hero-note">✓ No credit card required ✓ 3 free AI evaluations daily</p>
         </div>
-        <div className="hero-image">
+        <div className="hero-image" aria-hidden="true">
           <div className="hero-mockup">
             <div className="mockup-header">
               <span className="mockup-dot red"></span>
@@ -146,45 +146,43 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Features Section */}
       <section id="features" className="features-section">
-        <h2>Everything You Need to Succeed</h2>
+        <h2>Everything You Need to Succeed in IELTS</h2>
         <p className="section-subtitle">Comprehensive preparation for all four IELTS modules</p>
         <div className="features-grid">
           {features.map((feature, index) => (
-            <div key={index} className="feature-card">
-              <span className="feature-icon">{feature.icon}</span>
+            <article key={index} className="feature-card">
+              <span className="feature-icon" aria-hidden="true">{feature.icon}</span>
               <h3>{feature.title}</h3>
               <p>{feature.description}</p>
-            </div>
+            </article>
           ))}
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section className="how-it-works-section">
-        <h2>How It Works</h2>
+        <h2>How IELTS Master Works</h2>
         <div className="steps-container">
           <div className="step">
             <div className="step-number">1</div>
             <h3>Sign Up & Set Goals</h3>
             <p>Create your account, choose Academic or General Training, and set your target band score.</p>
           </div>
-          <div className="step-arrow">→</div>
+          <div className="step-arrow" aria-hidden="true">→</div>
           <div className="step">
             <div className="step-number">2</div>
             <h3>Practice Daily</h3>
             <p>Complete writing tasks, speaking exercises, reading passages, and listening sections.</p>
           </div>
-          <div className="step-arrow">→</div>
+          <div className="step-arrow" aria-hidden="true">→</div>
           <div className="step">
             <div className="step-number">3</div>
             <h3>Get AI Feedback</h3>
             <p>Receive instant band scores and detailed advice on how to improve.</p>
           </div>
-          <div className="step-arrow">→</div>
+          <div className="step-arrow" aria-hidden="true">→</div>
           <div className="step">
             <div className="step-number">4</div>
             <h3>Track & Achieve</h3>
@@ -193,10 +191,9 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section className="testimonials-section">
-        <h2>Success Stories</h2>
-        <p className="section-subtitle">Join our growing community of IELTS achievers</p>
+        <h2>Join Thousands of IELTS Achievers</h2>
+        <p className="section-subtitle">Students from Nigeria, India, Pakistan, Philippines and 50+ countries trust IELTS Master</p>
         <div className="testimonials-placeholder">
           <div className="placeholder-icon">🌟</div>
           <h3>Be One of Our First Success Stories!</h3>
@@ -207,13 +204,12 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
       <section id="pricing" className="pricing-section">
         <h2>Simple, Transparent Pricing</h2>
         <p className="section-subtitle">Start free, upgrade when you're ready</p>
         <div className="pricing-grid">
           {pricingPlans.map((plan, index) => (
-            <div key={index} className={`pricing-card ${plan.popular ? 'popular' : ''}`}>
+            <article key={index} className={`pricing-card ${plan.popular ? 'popular' : ''}`}>
               {plan.popular && <span className="popular-badge">Most Popular</span>}
               <h3>{plan.name}</h3>
               <div className="pricing-amount">
@@ -232,25 +228,23 @@ const LandingPage = () => {
               >
                 {plan.cta}
               </button>
-            </div>
+            </article>
           ))}
         </div>
       </section>
 
-      {/* FAQ Section */}
       <section className="faq-section">
         <h2>Frequently Asked Questions</h2>
         <div className="faq-grid">
           {faqs.map((faq, index) => (
-            <div key={index} className="faq-item">
+            <article key={index} className="faq-item">
               <h3>{faq.question}</h3>
               <p>{faq.answer}</p>
-            </div>
+            </article>
           ))}
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="cta-section">
         <h2>Ready to Achieve Your Target Band Score?</h2>
         <p>Join thousands of students preparing smarter with AI-powered feedback.</p>
@@ -260,7 +254,6 @@ const LandingPage = () => {
         <p className="cta-note">No credit card required • Cancel anytime</p>
       </section>
 
-      {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
           <div className="footer-brand">
@@ -272,8 +265,8 @@ const LandingPage = () => {
               <h4>Product</h4>
               <a href="#features">Features</a>
               <a href="#pricing">Pricing</a>
-              <a onClick={() => navigate('/login')}>Login</a>
-              <a onClick={() => navigate('/signup')}>Sign Up</a>
+              <a href="/login" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>Login</a>
+              <a href="/signup" onClick={(e) => { e.preventDefault(); navigate('/signup'); }}>Sign Up</a>
             </div>
             <div className="footer-column">
               <h4>Legal</h4>
@@ -282,12 +275,12 @@ const LandingPage = () => {
             </div>
             <div className="footer-column">
               <h4>Contact</h4>
-              <a href="mailto:support@ieltsmaster.com">support@ieltsmaster.com</a>
+              <a href="mailto:support@ielts-masters.com">support@ielts-masters.com</a>
             </div>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>© 2025 IELTS Master. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} IELTS Master. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -228,3 +228,11 @@
     gap: 0.5rem;
   }
 }
+/* Fix any overflow issues */
+.speaking-history {
+  overflow-x: hidden;
+}
+
+.history-main {
+  overflow: hidden;
+}

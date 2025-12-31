@@ -136,7 +136,7 @@ const LandingPage = () => {
               <span className="mockup-dot green"></span>
             </div>
             <div className="mockup-content">
-              <div className="mockup-score">Band 7.5</div>
+              <div className="mockup-score">Band 7.5+</div>
               <div className="mockup-bars">
                 <div className="mockup-bar" style={{width: '85%'}}></div>
                 <div className="mockup-bar" style={{width: '75%'}}></div>

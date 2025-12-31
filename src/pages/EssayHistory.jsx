@@ -154,11 +154,11 @@ const EssayHistory = () => {
                     <span className="essay-date">{formatDate(essay.createdAt)}</span>
                   </div>
                   <div className="essay-score-section">
-                    {essay.score ? (
-                      <div className={`score-badge ${getScoreColor(essay.score)}`}><span className="score-label">Band</span><span className="score-value">{essay.score}</span></div>
-                    ) : (
-                      <div className="score-badge score-pending"><span className="score-label">Pending</span></div>
-                    )}
+                  {(essay.score || essay.feedback?.overallBand) ? (
+  <div className={`score-badge ${getScoreColor(essay.score || essay.feedback?.overallBand)}`}><span className="score-label">Band</span><span className="score-value">{essay.score || essay.feedback?.overallBand}</span></div>
+) : (
+  <div className="score-badge score-pending"><span className="score-label">Pending</span></div>
+)} 
                     <span className="expand-icon">{expandedEssay === (essay._id || essay.id) ? '▲' : '▼'}</span>
                   </div>
                 </div>

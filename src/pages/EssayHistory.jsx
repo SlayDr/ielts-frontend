@@ -150,7 +150,7 @@ const EssayHistory = () => {
                 <div className="essay-card-header" onClick={() => setExpandedEssay(expandedEssay === (essay._id || essay.id) ? null : (essay._id || essay.id))}>
                   <div className="essay-main-info">
                     <span className="task-type-badge">{getTaskTypeLabel(essay.taskType)}</span>
-                   <h3 className="essay-topic">{truncateText(essay.topic || essay.prompt || essay.question || 'Untitled Essay', 80)}</h3>
+                   <h3 className="essay-topic">{truncateText(essay.topic || essay.prompt || essay.question || essay.essay || essay.content || 'Untitled Essay', 80)}</h3>
                     <span className="essay-date">{formatDate(essay.createdAt)}</span>
                   </div>
                   <div className="essay-score-section">

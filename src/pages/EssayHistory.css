@@ -7,7 +7,7 @@
   padding-bottom: 4rem;
 }
 
-.history-header {
+.essay-history .history-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
   padding: 2rem 1.5rem 3rem;
   position: relative;

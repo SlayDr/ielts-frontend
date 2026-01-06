@@ -236,3 +236,30 @@
 .history-main {
   overflow: hidden;
 }
+/* Fix floating part badge issue */
+.speaking-history .history-main {
+  position: relative;
+  overflow: hidden;
+}
+
+.speaking-history .sessions-list {
+  position: relative;
+  overflow: hidden;
+}
+
+.speaking-history .session-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.speaking-history .session-header {
+  position: relative;
+  overflow: visible;
+}
+
+.speaking-history .part-badge {
+  position: relative !important;
+  float: none !important;
+  top: auto !important;
+  right: auto !important;
+}
